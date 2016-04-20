@@ -1,3 +1,3 @@
-# saharahealth-api
+# health-api
 
 a [Sails](http://sailsjs.org) application
