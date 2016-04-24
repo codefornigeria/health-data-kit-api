@@ -28,7 +28,6 @@ module.exports.models = {
   *                                                                          *
   ***************************************************************************/
   migrate: 'alter',
- connection : "mongoTestDb",
   schema: true,
 
 };
