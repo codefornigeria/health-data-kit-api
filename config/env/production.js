@@ -20,7 +20,7 @@ module.exports = {
     models: {
         connection: 'herokuMongoDb',
     },
-     settings: {
+    settings: {
         baseUrlApi: process.env.BASE_URL_API || "http://api.verifyng.dev",
         baseUrlUi: process.env.BASE_URL_UI || "http://app.verifyng.dev",
         baseUrl: process.env.BASE_URL || "verifyng.dev",
@@ -54,6 +54,8 @@ module.exports = {
             publishableKey: "pk_test_8niTRZ8f7oQfNwHqz7Li0PYv"
         },
         paystack_key: 'sk_test_4c7dc9eca8b765a8f992f0b150ca77881b04fd29',
+        emailClient: 'sparkpost',
+        sparkPostKey: '5dc47b9b6aef7ee5acb7cc4a466b91305d735fa0',
 
         sms: {
             GatewayUrl: 'https://api.infobip.com',
