@@ -16,6 +16,10 @@ module.exports = {
             type: 'string',
             required: 'true'
         },
+        gender : {
+            type : 'string',
+            required : true
+        },
         telephone: {
             type: 'string',
             required: true
@@ -31,6 +35,31 @@ module.exports = {
         }
     },
     validateDoctor: function(options) {
-        
-    }
+
+        var doctorQry = Doctor.findOne({
+            name: options.name,
+            email: options.email,
+            gender : options.gender
+        })
+        return doctorQry;
+    },
+
+    validationMessages: {
+        name: {
+            required: ' Name is required'
+        },
+        address: {
+            required: 'Address is required'
+        },
+        gender: {
+            required: 'Sex is required'
+        },
+        telephone: {
+            required: 'Telephone is required'
+        },
+        email: {
+            required: 'Email is required',
+            email: 'Invalid user email',
+        },
+    },
 };
