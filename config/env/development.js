@@ -15,9 +15,17 @@ module.exports = {
         herokuMongoDb: {
             adapter: 'sails-mongo',
             url: process.env.MONGODB_URI
-        }
+        },
+             mongoTestDb: {
+                adapter: 'sails-mongo',
+                host: 'localhost',
+                port: 27017,
+                user: '',
+                password: '',
+                database: 'saharahealth'
+            }
     },
     models: {
-        connection: 'herokuMongoDb',
+        connection: 'mongoTestDb',
     }
 };

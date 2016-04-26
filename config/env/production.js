@@ -58,7 +58,7 @@ module.exports = {
         sparkPostKey: '5dc47b9b6aef7ee5acb7cc4a466b91305d735fa0',
 
         sms: {
-            GatewayUrl: 'https://api.infobip.com',
+             GatewayUrl: 'https://api.infobip.com',
 
             GatewayUsername: 'smegenius',
 

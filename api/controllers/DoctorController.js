@@ -126,7 +126,7 @@ module.exports = {
              var DoctorCreateQry =false
              if(doctor) {
                 existingDoctor = true
-                DoctorCreateQry = doc
+                DoctorCreateQry = doctor
              }
             if(!doctor) {
              DoctorCreateQry = Doctor.create(data);
@@ -136,7 +136,7 @@ module.exports = {
             if(existingDoctor){
                        return ResponseService.json(200, res, "Doctor already exists", doctor);
             }
-            if (course) {
+            if (doctor) {
                 return ResponseService.json(200, res, "Doctor created successfully", doctor);
             }
 

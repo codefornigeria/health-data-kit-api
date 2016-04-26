@@ -19,7 +19,7 @@ module.exports = {
         gender : {
             type : 'string',
             required : true
-        },
+        },  
         telephone: {
             type: 'string',
             required: true
@@ -46,7 +46,7 @@ module.exports = {
 
     validationMessages: {
         name: {
-            required: ' Name is required'
+            required: 'Name is required'
         },
         address: {
             required: 'Address is required'
