@@ -34,7 +34,32 @@ module.exports.routes = {
 
   '/': {
     view: 'homepage'
-  }
+  },
+
+  'POST /doctor' : {
+    controller : 'DoctorController',
+    action : 'create'
+  } , 
+  'GET /doctor' : {
+    controller : 'DoctorController',
+    action : 'list'
+  },
+  'GET /doctor/:id': {
+    controller : 'DoctorController', 
+    action : 'view'
+  },
+  'GET /doctor/search' : {
+    controller : 'DoctorController',
+    action : 'search'
+  },
+  'PUT /doctor/:id' : {
+    controller : 'DoctorController',
+    action : 'update'
+  },
+  'DELETE /doctor/:id'  :{
+    controller : 'DoctorController',
+    action : 'delete'
+  },
 
   /***************************************************************************
   *                                                                          *

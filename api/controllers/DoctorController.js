@@ -155,18 +155,17 @@ module.exports = {
      * @apiVersion 0.0.1
      *
      *   @apiUse DoctorHeader
-     * 
+     * @apiParam {Array}  doctors   Doctors Object Array
+     * @apiParam {String} name  doctor name
+     * @apiParam {String} address Doctor address
+     * @apiParam {String} [specialization] Doctor Specialization
+     * @apiParam {String} telephone Doctor Telephone Number
+     * @apiParam {String} email Doctor Email Address
+     * @apiParam {String} picture Doctor avatar
      *
-     * @apiParam {object[]} courses  courses
-     * @apiParam {Integer} courses.school  school id
-     * @apiParam {String} courses.faculty Faculty id
-     * @apiParam {String} [courses.discipline] Discipline id
-     * @apiParam {String} courses.name course name 
-     * @apiParam {String} [courses.coursecode] course code 
-     * @apiParam {String} [courses.description] course description 
-     * @apiParam {boolean} courses.active  is active course
-     * @apiParam {String} courses.unit Course unit 
+      
      *
+ \    *
      * @apiUse DoctorSuccessResponseData
      *
      * @apiSuccessExample Success-Response
@@ -357,6 +356,118 @@ module.exports = {
         });
     },
 
+    /**
+     * @api {get} /doctor/search Search Doctors
+     * @apiName Search  Doctors
+     * @apiGroup Doctor
+     * @apiVersion 0.0.1
+     *
+     *
+     *  @apiUse DoctorHeader
+     *  
+     * @apiUse DoctorSuccessResponseData
+     *
+     * 
+     * @apiSuccessExample Success-Response
+     * HTTP/1.1 200 OK
+     * {
+     *    response: {
+     *        message: "Doctors retrieved successfully",
+     *        data: [
+     *       {
+     *              school: "35467irefc4t5",
+     *              faculty: "dgbfdt35466736554",
+     *              name: "engineering mathematics",
+     *              shortName: " MTH 101",
+     *              active: true,
+     *              unit: 4,
+     *              description: "Engineering mathematics description",
+     *              createdAt: "2015-12-04T14:12:49.328Z",
+     *              updatedAt: "2015-12-04T14:12:49.328Z",
+     *              id: "56619f611d2b4c0170107d22"
+     *            },
+     *            {
+     *              school: "35467irefc4t5",
+     *              faculty: "dgbfdt35466736554",
+     *              name: "engineering mathematics",
+     *              shortName: " MTH 101",
+     *              active: true,
+     *              unit: 4,
+     *              description: "Engineering mathematics description",
+     *              createdAt: "2015-12-04T14:12:49.328Z",
+     *              updatedAt: "2015-12-04T14:12:49.328Z",
+     *              id: "56619f611d2b4c0170107d22"
+     *            }
+     *       ]
+     *    }
+     * }
+     *
+     *
+     * @apiErrorExample Error-Response
+     * HTTP/1.1 404 Not Found
+     * {
+     *    response: {
+     *        message: "Courses not found",
+     *        data : []
+     *    }
+     * }
+     *
+     * @apiError (Error 400) {Object} response variable holding response data
+     * @apiError (Error 400) {String} response.message response message
+     */
+    search: function(req, res) {
+        var pagination = {
+            page: parseInt(req.query.page) || 1,
+            limit: parseInt(req.query.perPage) || 10
+        };
+
+        var criteria = {
+            isDeleted: false
+        };
+
+        if (req.query.name) {
+            criteria.name ={
+                'startsWith': req.query.name
+            }; // change this to starts with  or endswith
+        }
+ if (req.query.specialization) {
+            criteria.specialization = req.query.specialization;
+        }
+
+         if (req.query.email) {
+            criteria.email = req.query.email;
+        }
+        if (req.query.telephone) {
+            criteria.telephone = req.query.telephone;
+        }
+
+
+        Doctor.count(criteria).then(function(count) {
+            var findQuery = Doctor.find(criteria).populateAll()
+                .sort('createdAt DESC')
+                .paginate(pagination);
+            return [count, findQuery]
+
+        }).spread(function(count, doctors) {
+            if (doctors.length) {
+                var numberOfPages = Math.ceil(count / pagination.limit)
+                var nextPage = parseInt(pagination.page) + 1;
+                var meta = {
+                    page: pagination.page,
+                    perPage: pagination.limit,
+                    previousPage: (pagination.page > 1) ? parseInt(pagination.page) - 1 : false,
+                    nextPage: (numberOfPages >= nextPage) ? nextPage : false,
+                    pageCount: numberOfPages,
+                    total: count
+                }
+                return ResponseService.json(200, res, " Doctors retrieved successfully", doctors, meta);
+            } else {
+                return ResponseService.json(200, res,"Doctors not found", [])
+            }
+        }).catch(function(err) {
+            return ValidationService.jsonResolveError(err, res);
+        });
+    },
     /**
      * @api {get} /doctor/:id View Doctor
      * @apiName View  Doctor

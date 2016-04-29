@@ -27,6 +27,9 @@ module.exports = {
         email: {
             type: 'string',
         },
+        folioNumber : {
+            type : 'string'
+        },
         picture: {
             type: 'string'
         },
