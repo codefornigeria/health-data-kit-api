@@ -441,7 +441,7 @@ module.exports = {
             criteria.telephone = req.query.telephone;
         }
 
-
+        console.log('criteria');
         Doctor.count(criteria).then(function(count) {
             var findQuery = Doctor.find(criteria).populateAll()
                 .sort('createdAt DESC')
@@ -521,7 +521,7 @@ module.exports = {
                 if (!doctor) {
                     return ResponseService.json(404, res, "Doctor not found");
                 }
-                return ResponseService.json(200, res, "Doctor retrieved successfully", course);
+                return ResponseService.json(200, res, "Doctor retrieved successfully", doctor);
             })
             .catch(function(err) {
                 return ValidationService.jsonResolveError(err, res);

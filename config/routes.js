@@ -44,14 +44,15 @@ module.exports.routes = {
     controller : 'DoctorController',
     action : 'list'
   },
-  'GET /doctor/:id': {
-    controller : 'DoctorController', 
-    action : 'view'
-  },
   'GET /doctor/search' : {
     controller : 'DoctorController',
     action : 'search'
   },
+  'GET /doctor/:id': {
+    controller : 'DoctorController', 
+    action : 'view'
+  },
+  
   'PUT /doctor/:id' : {
     controller : 'DoctorController',
     action : 'update'
@@ -60,7 +61,10 @@ module.exports.routes = {
     controller : 'DoctorController',
     action : 'delete'
   },
-
+  'POST /hospital' : {
+    controller : 'HospitalController',
+    action : 'create'
+  }
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *
