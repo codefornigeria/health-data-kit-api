@@ -35,6 +35,10 @@ module.exports = {
         },
         specialization: {
             model: 'specialization'
+        } , 
+        isDeleted : {
+            type :'boolean',
+            defaultsTo:false
         }
     },
     validateDoctor: function(options) {

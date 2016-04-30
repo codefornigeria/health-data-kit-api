@@ -11,6 +11,7 @@
     "bcrypt": "^0.8.5",
     "bluebird": "^3.0.6",
     "ejs": "^0.8.8",
+    "excel": "^0.1.5",
     "fnv-plus": "^1.2.12",
     "grunt": "0.4.2",
     "grunt-contrib-clean": "~0.5.0",
@@ -39,10 +40,12 @@
     "sails-hook-validation": "^0.4.3",
     "sails-mongo": "^0.11.5",
     "skipper-s3": "^0.5.6",
+    "slug": "^0.9.1",
     "sparkpost": "^1.3.3",
     "stripe": "^4.1.0",
     "twilio": "^2.5.2",
-    "waterline-criteria": "^0.11.2"
+    "waterline-criteria": "^0.11.2",
+    "xlsx": "^0.8.0"
   },
   "scripts": {
     "debug": "node debug app.js",

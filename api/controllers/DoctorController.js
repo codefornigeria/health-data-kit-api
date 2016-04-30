@@ -648,7 +648,6 @@ module.exports = {
     delete: function(req, res) {
         Doctor.update({
                 id: req.params.id,
-                isDeleted: false
             }, {
                 isDeleted: true
             }).then(function(deleted) {
