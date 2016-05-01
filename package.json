@@ -10,6 +10,7 @@
   "dependencies": {
     "bcrypt": "^0.8.5",
     "bluebird": "^3.0.6",
+    "csv": "^0.4.6",
     "ejs": "^0.8.8",
     "excel": "^0.1.5",
     "fnv-plus": "^1.2.12",

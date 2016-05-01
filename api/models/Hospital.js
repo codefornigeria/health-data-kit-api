@@ -11,12 +11,46 @@ module.exports = {
     attributes: {
         facilityName: {
             type: 'string',
-            required : true
+            required: true
         },
-        slug: {
-            type: 'string',
-            unique: true
+        facilityTypeDisplay: {
+            type: 'string'
         },
+        maternalHealth: {
+            type: 'boolean'
+        },
+        emergencyTransport: {
+            type: 'boolean'
+        },
+        skilledBirthAttendant: {
+            type: 'boolean'
+        },
+        numChewsFulltime: {
+            type: 'integer'
+        },
+        phcnElectricity : {
+            type: 'boolean'
+        },
+        cSectionYn  : {
+            type :'boolean'
+        },
+        childHealthMeaslesImmunCalc : {
+            type:'boolean'
+        },
+
+        numNursesFulltime : {
+            type: 'integer'
+        } , 
+        numDoctorsFulltime: {
+            type : 'integer'
+        },
+        surveyDate : {
+            type : 'date'
+        },
+        facilityId : {
+            type : 'string'
+        },
+
         community: {
             type: 'string'
         },
@@ -35,7 +69,10 @@ module.exports = {
         vaccineFridge: {
             type: 'boolean'
         },
-        familyPlannig: {
+        antenatalCareYn : {
+            type : 'boolean'
+        },
+        familyPlanningYn: {
             type: 'boolean'
         },
         malariaTreatmentArtemisinin: {
@@ -47,16 +84,18 @@ module.exports = {
         location: {
             type: 'json'
         },
+        photoId : {
+            type : 'string'
+        },
+        surveyId : {
+            type : 'string'
+        },
         longitude: {
             type: 'float'
         },
         latitude: {
             type: 'float'
         }
-    },
-    beforeCreate: function(values, cb) {
-        values.slug = slug(values.name, { lower: true });
-        cb();
     },
     validationMessages: {
 

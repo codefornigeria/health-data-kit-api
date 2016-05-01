@@ -9,13 +9,16 @@ module.exports = {
 
   attributes: {
     doctorsLoaded : {
-        type : 'boolean'
+        type : 'boolean',
+        defaultsTo:false
     },
     hospitalsLoaded : {
-        type : 'boolean'
+        type : 'boolean',
+        defaultsTo:false
     },
     medicinesLoaded : {
-        type : 'boolean'
+        type : 'boolean',
+        defaultsTo:false
     }
   }
 };

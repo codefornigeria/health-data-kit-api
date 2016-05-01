@@ -14,15 +14,12 @@ module.exports = {
         },
         address: {
             type: 'string',
-            required: 'true'
         },
         gender : {
             type : 'string',
-            required : true
         },  
         telephone: {
             type: 'string',
-            required: true
         },
         email: {
             type: 'string',
