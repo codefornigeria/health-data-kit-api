@@ -96,6 +96,10 @@ module.exports = {
         latitude: {
             type: 'float'
         }
+        isDeleted : {
+            type : 'boolean', 
+            defaultsTo : false
+        }
     },
     validationMessages: {
 

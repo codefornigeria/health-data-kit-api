@@ -254,6 +254,124 @@ module.exports = {
     },
     
     /**
+     * @api {post} /hospital/search Search Hopsitals
+     * @apiName Search  Hospitals
+     * @apiGroup Hospital
+     * @apiVersion 0.0.1
+     *
+     *
+     *  @apiUse HospitalHeader
+     * @apiParam {object} location  location
+     * @apiParam {String} location.name  name of location
+     * @apiParam {String} location.longitude  location longitude  
+     * @apiParam {String} location.latitude  location latitude
+    
+     
+     * @apiUse HospitalSuccessResponseData
+     *
+     * 
+     * @apiSuccessExample Success-Response
+     * HTTP/1.1 200 OK
+     * {
+     *    response: {
+     *        message: "Hospitals retrieved successfully",
+     *        data: [
+     *       {
+     *              school: "35467irefc4t5",
+     *              faculty: "dgbfdt35466736554",
+     *              name: "engineering mathematics",
+     *              shortName: " MTH 101",
+     *              active: true,
+     *              unit: 4,
+     *              description: "Engineering mathematics description",
+     *              createdAt: "2015-12-04T14:12:49.328Z",
+     *              updatedAt: "2015-12-04T14:12:49.328Z",
+     *              id: "56619f611d2b4c0170107d22"
+     *            },
+     *            {
+     *              school: "35467irefc4t5",
+     *              faculty: "dgbfdt35466736554",
+     *              name: "engineering mathematics",
+     *              shortName: " MTH 101",
+     *              active: true,
+     *              unit: 4,
+     *              description: "Engineering mathematics description",
+     *              createdAt: "2015-12-04T14:12:49.328Z",
+     *              updatedAt: "2015-12-04T14:12:49.328Z",
+     *              id: "56619f611d2b4c0170107d22"
+     *            }
+     *       ]
+     *    }
+     * }
+     *
+     *
+     * @apiErrorExample Error-Response
+     * HTTP/1.1 404 Not Found
+     * {
+     *    response: {
+     *        message: "Hospitals not found",
+     *        data : []
+     *    }
+     * }
+     *
+     * @apiError (Error 400) {Object} response variable holding response data
+     * @apiError (Error 400) {String} response.message response message
+     */
+    search: function(req, res) {
+        var data = req.body;
+        var pagination = {
+            page: parseInt(req.query.page) || 1,
+            limit: parseInt(req.query.perPage) || 10
+        };
+
+        var criteria = {
+            isDeleted: false
+        };
+
+        if (req.query.name) {
+            criteria.name = req.query.name; // change this to starts with  or endswith
+        }
+ if (req.query.specialization) {
+            criteria.specialization = req.query.specialization;
+        }
+
+         if (req.query.email) {
+            criteria.email = req.query.email;
+        }
+        if (req.query.telephone) {
+            criteria.telephone = req.query.telephone;
+        }
+
+
+        Hospital.count(criteria).then(function(count) {
+            var findQuery = Doctor.find(criteria).populateAll()
+                .sort('createdAt DESC')
+                .paginate(pagination);
+            return [count, findQuery]
+
+        }).spread(function(count, doctors) {
+            if (hospitals.length) {
+                var numberOfPages = Math.ceil(count / pagination.limit)
+                var nextPage = parseInt(pagination.page) + 1;
+                var meta = {
+                    page: pagination.page,
+                    perPage: pagination.limit,
+                    previousPage: (pagination.page > 1) ? parseInt(pagination.page) - 1 : false,
+                    nextPage: (numberOfPages >= nextPage) ? nextPage : false,
+                    pageCount: numberOfPages,
+                    total: count
+                }
+                return ResponseService.json(200, res, " Hospitals retrieved successfully", doctors, meta);
+            } else {
+                return ResponseService.json(200, res,"Hospitals not found", [])
+            }
+        }).catch(function(err) {
+            return ValidationService.jsonResolveError(err, res);
+        });
+    },
+
+
+    /**
      * @api {get} /hospital List Hopsitals
      * @apiName List  Hospitals
      * @apiGroup Hospital
@@ -312,7 +430,7 @@ module.exports = {
      * @apiError (Error 400) {Object} response variable holding response data
      * @apiError (Error 400) {String} response.message response message
      */
-    list: function(req, res) {
+    search: function(req, res) {
         var pagination = {
             page: parseInt(req.query.page) || 1,
             limit: parseInt(req.query.perPage) || 10
@@ -321,6 +439,7 @@ module.exports = {
         var criteria = {
             isDeleted: false
         };
+
 
         if (req.query.name) {
             criteria.name = req.query.name; // change this to starts with  or endswith
