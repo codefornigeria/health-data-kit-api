@@ -31,7 +31,7 @@ module.exports = {
             type: 'string'
         },
         specialization: {
-            model: 'specialization'
+            type: 'string'
         } , 
         isDeleted : {
             type :'boolean',
