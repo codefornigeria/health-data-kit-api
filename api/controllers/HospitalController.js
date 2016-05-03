@@ -332,7 +332,6 @@ module.exports = {
         if (data.name) {
             criteria.facilityName = { 'startsWith': data.name };
         }
-
         Hospital.count(criteria).then(function(count) {
             var findQuery = Hospital.find(criteria).populateAll()
                 .sort('createdAt DESC')
@@ -420,7 +419,7 @@ module.exports = {
      * @apiError (Error 400) {Object} response variable holding response data
      * @apiError (Error 400) {String} response.message response message
      */
-    search: function(req, res) {
+    list: function(req, res) {
         var pagination = {
             page: parseInt(req.query.page) || 1,
             limit: parseInt(req.query.perPage) || 10
@@ -432,27 +431,18 @@ module.exports = {
 
 
         if (req.query.name) {
-            criteria.name = req.query.name; // change this to starts with  or endswith
+            criteria.facilityName = req.query.name; // change this to starts with  or endswith
         }
-        if (req.query.specialization) {
-            criteria.specialization = req.query.specialization;
-        }
-
-        if (req.query.email) {
-            criteria.email = req.query.email;
-        }
-        if (req.query.telephone) {
-            criteria.telephone = req.query.telephone;
-        }
+       
 
 
         Hospital.count(criteria).then(function(count) {
-            var findQuery = Doctor.find(criteria).populateAll()
+            var findQuery = Hospital.find(criteria).populateAll()
                 .sort('createdAt DESC')
                 .paginate(pagination);
             return [count, findQuery]
 
-        }).spread(function(count, doctors) {
+        }).spread(function(count, hospitals) {
             if (hospitals.length) {
                 var numberOfPages = Math.ceil(count / pagination.limit)
                 var nextPage = parseInt(pagination.page) + 1;
@@ -464,7 +454,7 @@ module.exports = {
                     pageCount: numberOfPages,
                     total: count
                 }
-                return ResponseService.json(200, res, " Hospitals retrieved successfully", doctors, meta);
+                return ResponseService.json(200, res, " Hospitals retrieved successfully", hospitals, meta);
             } else {
                 return ResponseService.json(200, res, "Hospitals not found", [])
             }
