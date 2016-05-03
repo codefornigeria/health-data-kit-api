@@ -330,7 +330,7 @@ module.exports = {
 
 
         if (data.name) {
-            criteria.name = { 'startsWith': data.name };
+            criteria.facilityName = { 'startsWith': data.name };
         }
 
         Hospital.count(criteria).then(function(count) {

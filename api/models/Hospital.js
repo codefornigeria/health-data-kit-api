@@ -102,6 +102,8 @@ module.exports = {
         }
     },
     validationMessages: {
-
+        facilityName : {
+            required : 'Facility Name is required'
+        }
     }
 };
