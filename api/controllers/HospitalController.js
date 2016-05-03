@@ -20,7 +20,7 @@ module.exports = {
      * @apiSuccess {String} response.message response message
      * @apiSuccess {Object} response.data variable holding actual data
      */
-    
+
     /**
      * @apiDefine  HospitalHeader
      * @apiHeader {String} Authorization Basic authorization header token
@@ -123,25 +123,25 @@ module.exports = {
      */
     create: function(req, res) {
         var data = req.body;
-    var verifyPayload =  {
-        name : data.name ,
-        isDeleted : false
-     }   
+        var verifyPayload = {
+            name: data.name,
+            isDeleted: false
+        }
 
-    Hospital.validateHospital(verifyPayload).then(function(doctor){
+        Hospital.validateHospital(verifyPayload).then(function(doctor) {
             var existingHospital = false
-             var HospitalCreateQry =false
-             if(hospital) {
+            var HospitalCreateQry = false
+            if (hospital) {
                 existingHospital = true
                 HospitalCreateQry = hospital
-             }
-            if(!hospital) {
-             HospitalCreateQry = Hospital.create(data);
             }
-            return [existingHospital,HospitalCreateQry];
-        }).spread(function(existingHospital,hospital) {
-            if(existingHospital){
-                       return ResponseService.json(200, res, "Hospital already exists", hospital);
+            if (!hospital) {
+                HospitalCreateQry = Hospital.create(data);
+            }
+            return [existingHospital, HospitalCreateQry];
+        }).spread(function(existingHospital, hospital) {
+            if (existingHospital) {
+                return ResponseService.json(200, res, "Hospital already exists", hospital);
             }
             if (hospital) {
                 return ResponseService.json(200, res, "Hospital created successfully", hospital);
@@ -153,7 +153,7 @@ module.exports = {
 
     },
 
-    
+
 
     /**
      * @api {post} /hospitals Batch Create Hospitals
@@ -235,11 +235,11 @@ module.exports = {
     batchCreate: function(req, res) {
 
 
-         var doctors = req.body.hospitals;
-   
+        var doctors = req.body.hospitals;
+
         var promiseArray = [];
         for (var i = 0, len = hospitals.length; i < len; i++) {
-         
+
             try {
                 promiseArray.push(Hospital.create(hospitals[i]));
             } catch (e) {
@@ -252,7 +252,7 @@ module.exports = {
 
 
     },
-    
+
     /**
      * @api {post} /hospital/search Search Hopsitals
      * @apiName Search  Hospitals
@@ -328,28 +328,18 @@ module.exports = {
             isDeleted: false
         };
 
-        if (req.query.name) {
-            criteria.name = req.query.name; // change this to starts with  or endswith
-        }
- if (req.query.specialization) {
-            criteria.specialization = req.query.specialization;
-        }
 
-         if (req.query.email) {
-            criteria.email = req.query.email;
+        if (data.name) {
+            criteria.name = { 'startsWith': data.name };
         }
-        if (req.query.telephone) {
-            criteria.telephone = req.query.telephone;
-        }
-
 
         Hospital.count(criteria).then(function(count) {
-            var findQuery = Doctor.find(criteria).populateAll()
+            var findQuery = Hospital.find(criteria).populateAll()
                 .sort('createdAt DESC')
                 .paginate(pagination);
             return [count, findQuery]
 
-        }).spread(function(count, doctors) {
+        }).spread(function(count, hospitals) {
             if (hospitals.length) {
                 var numberOfPages = Math.ceil(count / pagination.limit)
                 var nextPage = parseInt(pagination.page) + 1;
@@ -361,9 +351,9 @@ module.exports = {
                     pageCount: numberOfPages,
                     total: count
                 }
-                return ResponseService.json(200, res, " Hospitals retrieved successfully", doctors, meta);
+                return ResponseService.json(200, res, " Hospitals retrieved successfully", hospitals, meta);
             } else {
-                return ResponseService.json(200, res,"Hospitals not found", [])
+                return ResponseService.json(200, res, "Hospitals not found", [])
             }
         }).catch(function(err) {
             return ValidationService.jsonResolveError(err, res);
@@ -444,11 +434,11 @@ module.exports = {
         if (req.query.name) {
             criteria.name = req.query.name; // change this to starts with  or endswith
         }
- if (req.query.specialization) {
+        if (req.query.specialization) {
             criteria.specialization = req.query.specialization;
         }
 
-         if (req.query.email) {
+        if (req.query.email) {
             criteria.email = req.query.email;
         }
         if (req.query.telephone) {
@@ -476,7 +466,7 @@ module.exports = {
                 }
                 return ResponseService.json(200, res, " Hospitals retrieved successfully", doctors, meta);
             } else {
-                return ResponseService.json(200, res,"Hospitals not found", [])
+                return ResponseService.json(200, res, "Hospitals not found", [])
             }
         }).catch(function(err) {
             return ValidationService.jsonResolveError(err, res);
@@ -554,7 +544,7 @@ module.exports = {
      * @apiUse HospitalSuccessResponseData
      *
      * 
-    * @apiParam {Integer} school  school id
+     * @apiParam {Integer} school  school id
      * @apiParam {String} faculty Faculty id
      * @apiParam {String} [discipline] Discipline id
      * @apiParam {String} name course name 
@@ -678,4 +668,3 @@ module.exports = {
     }
 
 };
-
