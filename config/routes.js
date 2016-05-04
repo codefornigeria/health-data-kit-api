@@ -68,6 +68,10 @@ module.exports.routes = {
   'POST /hospital/search' : {
     controller : 'HospitalController',
     action : 'search'
+  },
+  'GET /hospital' : {
+    controller : 'HospitalController',
+    action : 'list'
   }
   /***************************************************************************
   *                                                                          *

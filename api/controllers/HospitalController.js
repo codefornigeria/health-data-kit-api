@@ -329,366 +329,345 @@ module.exports = {
             if (data.name) {
                 criteria.facilityName = { 'startsWith': data.name };
             }
+            console.log('searching for hospitals')
             Hospital.native(function(err, collection) {
-                    if (err) {
-                         return ResponseService.json(200, res, "Hospitals not found", [])
-                 }
-                    collection.find({
-                            location: {
-                                $near: {
-                                    $geometry: { type: "Point", coordinates: [parseFloat(data.longitude), parseFloat(data.latitude)] },
-                                    $minDistance: 10,
-                                    $maxDistance: 1000
-                                }
-                            } ,
-                            isDeleted : false
+                        if (err) {
+                            return ResponseService.json(200, res, "Hospitals not found", [])
+                        }
 
-                        }, function(err, hospitals) {
-                            if (err) {
-                             return ResponseService.json(200, res, "Hospitals not found", [])
-                         }
-                            if (hospitals.length) {
-                                var count = hospitals.length;
-                                var numberOfPages = Math.ceil(count / pagination.limit)
-                                var nextPage = parseInt(pagination.page) + 1;
-                                var meta = {
-                                    page: pagination.page,
-                                    perPage: pagination.limit,
-                                    previousPage: (pagination.page > 1) ? parseInt(pagination.page) - 1 : false,
-                                    nextPage: (numberOfPages >= nextPage) ? nextPage : false,
-                                    pageCount: numberOfPages,
-                                    total: count
+                        collection.geoNear(parseFloat(data.longitude), parseFloat(data.latitude), {
+                                limit: 30,
+                                maxDistance: 1000, // in meters
+                                //query: {}, // allows filtering
+                                distanceMultiplier: 3959, // converts radians to miles (use 6371 for km)
+                                spherical: true
+                            }, function(err , hospits) {
+
+                                if(err) { 
+                                    console.log(err)
+                                    return ResponseService.json(200, res, "Hospitals not found", [])
+                          
                                 }
-                                return ResponseService.json(200, res, " Hospitals retrieved successfully", hospitals, meta);
-                            } else {
-                                return ResponseService.json(200, res, "Hospitals not found", [])
-                            }
+                                        if (hospits.results.length) {
+                                    var count = hospits.results.length;
+                                    var numberOfPages = Math.ceil(count / pagination.limit)
+                                    var nextPage = parseInt(pagination.page) + 1;
+                                    var meta = {
+                                        page: pagination.page,
+                                        perPage: pagination.limit,
+                                        previousPage: (pagination.page > 1) ? parseInt(pagination.page) - 1 : false,
+                                        nextPage: (numberOfPages >= nextPage) ? nextPage : false,
+                                        pageCount: numberOfPages,
+                                        total: count
+                                    }
+                                    return ResponseService.json(200, res, " Hospitals retrieved successfully", hospits.results, meta);
+                                } else {
+                                    return ResponseService.json(200, res, "Hospitals not found", [])
+                                }
+                         
+                            })
+
                         })
-            })
 
-        // Hospital.count(criteria).then(function(count) {
-        //     var findQuery = Hospital.find(criteria).populateAll()
-        //         .sort('createdAt DESC')
-        //         .paginate(pagination);
-        //     return [count, findQuery]
-
-        // }).spread(function(count, hospitals) {
-        //     if (hospitals.length) {
-        //         var numberOfPages = Math.ceil(count / pagination.limit)
-        //         var nextPage = parseInt(pagination.page) + 1;
-        //         var meta = {
-        //             page: pagination.page,
-        //             perPage: pagination.limit,
-        //             previousPage: (pagination.page > 1) ? parseInt(pagination.page) - 1 : false,
-        //             nextPage: (numberOfPages >= nextPage) ? nextPage : false,
-        //             pageCount: numberOfPages,
-        //             total: count
-        //         }
-        //         return ResponseService.json(200, res, " Hospitals retrieved successfully", hospitals, meta);
-        //     } else {
-        //         return ResponseService.json(200, res, "Hospitals not found", [])
-        //     }
-        // }).catch(function(err) {
-        //     return ValidationService.jsonResolveError(err, res);
-        // });
-    },
+                 
+                },
 
 
-    /**
-     * @api {get} /hospital List Hopsitals
-     * @apiName List  Hospitals
-     * @apiGroup Hospital
-     * @apiVersion 0.0.1
-     *
-     *
-     *  @apiUse HospitalHeader
-     *  
-     * @apiUse HospitalSuccessResponseData
-     *
-     * 
-     * @apiSuccessExample Success-Response
-     * HTTP/1.1 200 OK
-     * {
-     *    response: {
-     *        message: "Hospitals retrieved successfully",
-     *        data: [
-     *       {
-     *              school: "35467irefc4t5",
-     *              faculty: "dgbfdt35466736554",
-     *              name: "engineering mathematics",
-     *              shortName: " MTH 101",
-     *              active: true,
-     *              unit: 4,
-     *              description: "Engineering mathematics description",
-     *              createdAt: "2015-12-04T14:12:49.328Z",
-     *              updatedAt: "2015-12-04T14:12:49.328Z",
-     *              id: "56619f611d2b4c0170107d22"
-     *            },
-     *            {
-     *              school: "35467irefc4t5",
-     *              faculty: "dgbfdt35466736554",
-     *              name: "engineering mathematics",
-     *              shortName: " MTH 101",
-     *              active: true,
-     *              unit: 4,
-     *              description: "Engineering mathematics description",
-     *              createdAt: "2015-12-04T14:12:49.328Z",
-     *              updatedAt: "2015-12-04T14:12:49.328Z",
-     *              id: "56619f611d2b4c0170107d22"
-     *            }
-     *       ]
-     *    }
-     * }
-     *
-     *
-     * @apiErrorExample Error-Response
-     * HTTP/1.1 404 Not Found
-     * {
-     *    response: {
-     *        message: "Hospitals not found",
-     *        data : []
-     *    }
-     * }
-     *
-     * @apiError (Error 400) {Object} response variable holding response data
-     * @apiError (Error 400) {String} response.message response message
-     */
-    list: function(req, res) {
-        var pagination = {
-            page: parseInt(req.query.page) || 1,
-            limit: parseInt(req.query.perPage) || 10
+                /**
+                 * @api {get} /hospital List Hopsitals
+                 * @apiName List  Hospitals
+                 * @apiGroup Hospital
+                 * @apiVersion 0.0.1
+                 *
+                 *
+                 *  @apiUse HospitalHeader
+                 *  
+                 * @apiUse HospitalSuccessResponseData
+                 *
+                 * 
+                 * @apiSuccessExample Success-Response
+                 * HTTP/1.1 200 OK
+                 * {
+                 *    response: {
+                 *        message: "Hospitals retrieved successfully",
+                 *        data: [
+                 *       {
+                 *              school: "35467irefc4t5",
+                 *              faculty: "dgbfdt35466736554",
+                 *              name: "engineering mathematics",
+                 *              shortName: " MTH 101",
+                 *              active: true,
+                 *              unit: 4,
+                 *              description: "Engineering mathematics description",
+                 *              createdAt: "2015-12-04T14:12:49.328Z",
+                 *              updatedAt: "2015-12-04T14:12:49.328Z",
+                 *              id: "56619f611d2b4c0170107d22"
+                 *            },
+                 *            {
+                 *              school: "35467irefc4t5",
+                 *              faculty: "dgbfdt35466736554",
+                 *              name: "engineering mathematics",
+                 *              shortName: " MTH 101",
+                 *              active: true,
+                 *              unit: 4,
+                 *              description: "Engineering mathematics description",
+                 *              createdAt: "2015-12-04T14:12:49.328Z",
+                 *              updatedAt: "2015-12-04T14:12:49.328Z",
+                 *              id: "56619f611d2b4c0170107d22"
+                 *            }
+                 *       ]
+                 *    }
+                 * }
+                 *
+                 *
+                 * @apiErrorExample Error-Response
+                 * HTTP/1.1 404 Not Found
+                 * {
+                 *    response: {
+                 *        message: "Hospitals not found",
+                 *        data : []
+                 *    }
+                 * }
+                 *
+                 * @apiError (Error 400) {Object} response variable holding response data
+                 * @apiError (Error 400) {String} response.message response message
+                 */
+                list: function(req, res) {
+                    var pagination = {
+                        page: parseInt(req.query.page) || 1,
+                        limit: parseInt(req.query.perPage) || 10
+                    };
+
+                    var criteria = {
+                        isDeleted: false
+                    };
+
+
+                    if (req.query.name) {
+                        criteria.facilityName = req.query.name; // change this to starts with  or endswith
+                    }
+
+
+
+                    Hospital.count(criteria).then(function(count) {
+                        var findQuery = Hospital.find(criteria).populateAll()
+                            .sort('createdAt DESC')
+                            .paginate(pagination);
+                        return [count, findQuery]
+
+                    }).spread(function(count, hospitals) {
+                        if (hospitals.length) {
+                            var numberOfPages = Math.ceil(count / pagination.limit)
+                            var nextPage = parseInt(pagination.page) + 1;
+                            var meta = {
+                                page: pagination.page,
+                                perPage: pagination.limit,
+                                previousPage: (pagination.page > 1) ? parseInt(pagination.page) - 1 : false,
+                                nextPage: (numberOfPages >= nextPage) ? nextPage : false,
+                                pageCount: numberOfPages,
+                                total: count
+                            }
+                            return ResponseService.json(200, res, " Hospitals retrieved successfully", hospitals, meta);
+                        } else {
+                            return ResponseService.json(200, res, "Hospitals not found", [])
+                        }
+                    }).catch(function(err) {
+                        return ValidationService.jsonResolveError(err, res);
+                    });
+                },
+
+                /**
+                 * @api {get} /hospital/:id View Hospital
+                 * @apiName View  Hospital
+                 * @apiGroup Hospital
+                 * @apiVersion 0.0.1
+                 *
+                 * @apiUse HospitalHeader
+                 *
+                 * @apiParam {String} id Hospital id
+                 * @apiUse HospitalSuccessResponseData
+                 *
+                 * @apiSuccessExample Success-Response
+                 * HTTP/1.1 200 OK
+                 * {
+                 *    response: {
+                 *        message: "Doctor retrieved successfully",
+                 *        data: {
+                 *              school: "35467irefc4t5",
+                 *              faculty: "dgbfdt35466736554",
+                 *              name: "engineering mathematics",
+                 *              shortName: " MTH 101",
+                 *              active: true,
+                 *              unit: 4,
+                 *              description: "Engineering mathematics description",
+                 *              createdAt: "2015-12-04T14:12:49.328Z",
+                 *              updatedAt: "2015-12-04T14:12:49.328Z",
+                 *              id: "56619f611d2b4c0170107d22"
+                 *            }
+                 *    }
+                 * }
+                 *
+                 *
+                 * @apiErrorExample Error-Response
+                 * HTTP/1.1 404 Not Found
+                 * {
+                 *    response: {
+                 *        message: "Doctor not found"
+                 *    }
+                 * }
+                 *
+                 * @apiError (Error 400) {Object} response variable holding response data
+                 * @apiError (Error 400) {String} response.message response message
+                 */
+                view: function(req, res) {
+                    var criteria = {
+                        isDeleted: false,
+                        id: req.params.id
+                    }
+
+                    Hospital.findOne(criteria).then(function(hospital) {
+                            if (!doctor) {
+                                return ResponseService.json(404, res, "Hospital not found");
+                            }
+                            return ResponseService.json(200, res, "Hospital retrieved successfully", hospital);
+                        })
+                        .catch(function(err) {
+                            return ValidationService.jsonResolveError(err, res);
+                        });
+                },
+
+                /**
+                 * @api {put} /hospital/:id Update hospital
+                 * @apiName Update Hospital
+                 * @apiGroup Hospital
+                 * @apiVersion 0.0.1
+                 *
+                 *  @apiUse HospitalHeader
+                 * 
+                 * @apiUse HospitalSuccessResponseData
+                 *
+                 * 
+                 * @apiParam {Integer} school  school id
+                 * @apiParam {String} faculty Faculty id
+                 * @apiParam {String} [discipline] Discipline id
+                 * @apiParam {String} name course name 
+                 * @apiParam {String} [coursecode] course code 
+                 * @apiParam {String} [description] course description 
+                 * @apiParam {boolean} active  is active course?
+                 * @apiParam {String} unit Course unit 
+                 *
+                 * @apiSuccessExample Success-Response
+                 * HTTP/1.1 200 OK
+                 * {
+                 *    response: {
+                 *        message: "Course updated successfully",
+                 *        data: {}
+                 *    }
+                 * }
+                 *
+                 *
+                 * @apiErrorExample Error-Response
+                 * HTTP/1.1 404 Not Found
+                 * {
+                 *    response: {
+                 *        message: "Course not found"
+                 *    }
+                 * }
+                 *
+                 * @apiError (Error 400) {Object} response variable holding response data
+                 * @apiError (Error 400) {String} response.message response message
+                 */
+                update: function(req, res) {
+                    var data = req.body;
+
+                    if (data.isDeleted) {
+                        delete data.isDeleted;
+                    }
+
+                    Hospital.update({
+                            id: req.params.id,
+                            isDeleted: false
+                        }, data).then(function(updated) {
+                            if (!updated.length) {
+                                return ResponseService.json(404, res, "Hospital not found");
+                            }
+                            return ResponseService.json(200, res, "Hospital updated successfully", updated[0]);
+                        })
+                        .catch(function(err) {
+                            return ValidationService.jsonResolveError(err, res);
+                        });
+                },
+
+                batchUpdate: function(req, res) {
+                    var hospitals = req.body.hospitals;
+
+
+                    var promiseArray = [];
+                    for (var i = 0, len = hospitals.length; i < len; i++) {
+                        if (!hospitals[i].id) {
+                            continue;
+                        }
+
+                        try {
+                            promiseArray.push(Doctor.update({
+                                id: hospitals[i].id
+                            }, hospitals[i]));
+                        } catch (e) {
+                            return ResponseService.json(500, res, "Internal Error: Please check inputs");
+                        }
+                    }
+                    Promise.all(promiseArray).then(function(hospitals) {
+                        return ResponseService.json(200, res, "Hospitals updated successfully", hospitals);
+                    });
+                },
+
+
+                /**
+                 * @api {delete} /doctor/:id Delete Doctor
+                 * @apiName Delete Doctor
+                 * @apiGroup Hospital
+                 * @apiVersion 0.0.1
+                 *
+                 *  @apiUse HospitalHeader
+                 *
+                 * @apiUse HospitalSuccessResponseData
+                 *
+                 *   @apiParam {String} Doctor id
+                 * 
+                 * @apiSuccessExample Success-Response
+                 * HTTP/1.1 200 OK
+                 * {
+                 *    response: {
+                 *        message: "Doctor deleted successfully",
+                 * }
+                 *
+                 *
+                 * @apiErrorExample Error-Response
+                 * HTTP/1.1 404 Not Found
+                 * {
+                 *    response: {
+                 *        message: "Doctor not found"
+                 *    }
+                 * }
+                 *
+                 * @apiError (Error 400) {Object} response variable holding response data
+                 * @apiError (Error 400) {String} response.message response message
+                 */
+                delete: function(req, res) {
+                    Hospitals.update({
+                            id: req.params.id,
+                            isDeleted: false
+                        }, {
+                            isDeleted: true
+                        }).then(function(deleted) {
+                            if (!deleted.length) {
+                                return ResponseService.json(404, res, "Hospital not found");
+                            }
+                            return ResponseService.json(200, res, "Hospital deleted successfully");
+                        })
+                        .catch(function(err) {
+                            return ValidationService.jsonResolveError(err, res);
+                        });
+                }
+
         };
-
-        var criteria = {
-            isDeleted: false
-        };
-
-
-        if (req.query.name) {
-            criteria.facilityName = req.query.name; // change this to starts with  or endswith
-        }
-
-
-
-        Hospital.count(criteria).then(function(count) {
-            var findQuery = Hospital.find(criteria).populateAll()
-                .sort('createdAt DESC')
-                .paginate(pagination);
-            return [count, findQuery]
-
-        }).spread(function(count, hospitals) {
-            if (hospitals.length) {
-                var numberOfPages = Math.ceil(count / pagination.limit)
-                var nextPage = parseInt(pagination.page) + 1;
-                var meta = {
-                    page: pagination.page,
-                    perPage: pagination.limit,
-                    previousPage: (pagination.page > 1) ? parseInt(pagination.page) - 1 : false,
-                    nextPage: (numberOfPages >= nextPage) ? nextPage : false,
-                    pageCount: numberOfPages,
-                    total: count
-                }
-                return ResponseService.json(200, res, " Hospitals retrieved successfully", hospitals, meta);
-            } else {
-                return ResponseService.json(200, res, "Hospitals not found", [])
-            }
-        }).catch(function(err) {
-            return ValidationService.jsonResolveError(err, res);
-        });
-    },
-
-    /**
-     * @api {get} /hospital/:id View Hospital
-     * @apiName View  Hospital
-     * @apiGroup Hospital
-     * @apiVersion 0.0.1
-     *
-     * @apiUse HospitalHeader
-     *
-     * @apiParam {String} id Hospital id
-     * @apiUse HospitalSuccessResponseData
-     *
-     * @apiSuccessExample Success-Response
-     * HTTP/1.1 200 OK
-     * {
-     *    response: {
-     *        message: "Doctor retrieved successfully",
-     *        data: {
-     *              school: "35467irefc4t5",
-     *              faculty: "dgbfdt35466736554",
-     *              name: "engineering mathematics",
-     *              shortName: " MTH 101",
-     *              active: true,
-     *              unit: 4,
-     *              description: "Engineering mathematics description",
-     *              createdAt: "2015-12-04T14:12:49.328Z",
-     *              updatedAt: "2015-12-04T14:12:49.328Z",
-     *              id: "56619f611d2b4c0170107d22"
-     *            }
-     *    }
-     * }
-     *
-     *
-     * @apiErrorExample Error-Response
-     * HTTP/1.1 404 Not Found
-     * {
-     *    response: {
-     *        message: "Doctor not found"
-     *    }
-     * }
-     *
-     * @apiError (Error 400) {Object} response variable holding response data
-     * @apiError (Error 400) {String} response.message response message
-     */
-    view: function(req, res) {
-        var criteria = {
-            isDeleted: false,
-            id: req.params.id
-        }
-
-        Hospital.findOne(criteria).then(function(hospital) {
-                if (!doctor) {
-                    return ResponseService.json(404, res, "Hospital not found");
-                }
-                return ResponseService.json(200, res, "Hospital retrieved successfully", hospital);
-            })
-            .catch(function(err) {
-                return ValidationService.jsonResolveError(err, res);
-            });
-    },
-
-    /**
-     * @api {put} /hospital/:id Update hospital
-     * @apiName Update Hospital
-     * @apiGroup Hospital
-     * @apiVersion 0.0.1
-     *
-     *  @apiUse HospitalHeader
-     * 
-     * @apiUse HospitalSuccessResponseData
-     *
-     * 
-     * @apiParam {Integer} school  school id
-     * @apiParam {String} faculty Faculty id
-     * @apiParam {String} [discipline] Discipline id
-     * @apiParam {String} name course name 
-     * @apiParam {String} [coursecode] course code 
-     * @apiParam {String} [description] course description 
-     * @apiParam {boolean} active  is active course?
-     * @apiParam {String} unit Course unit 
-     *
-     * @apiSuccessExample Success-Response
-     * HTTP/1.1 200 OK
-     * {
-     *    response: {
-     *        message: "Course updated successfully",
-     *        data: {}
-     *    }
-     * }
-     *
-     *
-     * @apiErrorExample Error-Response
-     * HTTP/1.1 404 Not Found
-     * {
-     *    response: {
-     *        message: "Course not found"
-     *    }
-     * }
-     *
-     * @apiError (Error 400) {Object} response variable holding response data
-     * @apiError (Error 400) {String} response.message response message
-     */
-    update: function(req, res) {
-        var data = req.body;
-
-        if (data.isDeleted) {
-            delete data.isDeleted;
-        }
-
-        Hospital.update({
-                id: req.params.id,
-                isDeleted: false
-            }, data).then(function(updated) {
-                if (!updated.length) {
-                    return ResponseService.json(404, res, "Hospital not found");
-                }
-                return ResponseService.json(200, res, "Hospital updated successfully", updated[0]);
-            })
-            .catch(function(err) {
-                return ValidationService.jsonResolveError(err, res);
-            });
-    },
-
-    batchUpdate: function(req, res) {
-        var hospitals = req.body.hospitals;
-
-
-        var promiseArray = [];
-        for (var i = 0, len = hospitals.length; i < len; i++) {
-            if (!hospitals[i].id) {
-                continue;
-            }
-
-            try {
-                promiseArray.push(Doctor.update({
-                    id: hospitals[i].id
-                }, hospitals[i]));
-            } catch (e) {
-                return ResponseService.json(500, res, "Internal Error: Please check inputs");
-            }
-        }
-        Promise.all(promiseArray).then(function(hospitals) {
-            return ResponseService.json(200, res, "Hospitals updated successfully", hospitals);
-        });
-    },
-
-
-    /**
-     * @api {delete} /doctor/:id Delete Doctor
-     * @apiName Delete Doctor
-     * @apiGroup Hospital
-     * @apiVersion 0.0.1
-     *
-     *  @apiUse HospitalHeader
-     *
-     * @apiUse HospitalSuccessResponseData
-     *
-     *   @apiParam {String} Doctor id
-     * 
-     * @apiSuccessExample Success-Response
-     * HTTP/1.1 200 OK
-     * {
-     *    response: {
-     *        message: "Doctor deleted successfully",
-     * }
-     *
-     *
-     * @apiErrorExample Error-Response
-     * HTTP/1.1 404 Not Found
-     * {
-     *    response: {
-     *        message: "Doctor not found"
-     *    }
-     * }
-     *
-     * @apiError (Error 400) {Object} response variable holding response data
-     * @apiError (Error 400) {String} response.message response message
-     */
-    delete: function(req, res) {
-        Hospitals.update({
-                id: req.params.id,
-                isDeleted: false
-            }, {
-                isDeleted: true
-            }).then(function(deleted) {
-                if (!deleted.length) {
-                    return ResponseService.json(404, res, "Hospital not found");
-                }
-                return ResponseService.json(200, res, "Hospital deleted successfully");
-            })
-            .catch(function(err) {
-                return ValidationService.jsonResolveError(err, res);
-            });
-    }
-
-};
