@@ -41,6 +41,9 @@ module.exports = {
         numNursesFulltime : {
             type: 'integer'
         } , 
+        numNurseMidwivesFulltime : {
+            type : 'integer'
+        },
         numDoctorsFulltime: {
             type : 'integer'
         },
@@ -96,10 +99,14 @@ module.exports = {
         latitude: {
             type: 'float'
         },
+        uniqueLga : {
+            type : 'string'
+        },
         isDeleted : {
             type : 'boolean', 
             defaultsTo : false
         }
+
     },
     validationMessages: {
         facilityName : {

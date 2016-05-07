@@ -65,25 +65,57 @@ module.exports.bootstrap = function(cb) {
             }
 
             csvParser.parse(hospitalscsv, {
-                columns: ['id','facility_name','facility_type_display','maternal_health_delivery_services','emergency_transport','skilled_birth_attendant','num_chews_fulltime','phcn_electricity','c_section_yn','child_health_measles_immun_calc','num_nurses_fulltime','num_nursemidwives_fulltime','num_doctors_fulltime','date_of_survey','facility_id','community','ward','management','improved_water_supply','improved_sanitation','vaccines_fridge_freezer','antenatal_care_yn','family_planning_yn','malaria_treatment_artemisinin','sector','formhub_photo_id','gps','survey_id','unique_lga','latitude','longitude','geo']
+                columns: ['id', 'facility_name', 'facility_type_display', 'maternal_health_delivery_services', 'emergency_transport', 'skilled_birth_attendant', 'num_chews_fulltime', 'phcn_electricity', 'c_section_yn', 'child_health_measles_immun_calc', 'num_nurses_fulltime', 'num_nursemidwives_fulltime', 'num_doctors_fulltime', 'date_of_survey', 'facility_id', 'community', 'ward', 'management', 'improved_water_supply', 'improved_sanitation', 'vaccines_fridge_freezer', 'antenatal_care_yn', 'family_planning_yn', 'malaria_treatment_artemisinin', 'sector', 'formhub_photo_id', 'gps', 'survey_id', 'unique_lga', 'latitude', 'longitude', 'geo']
             }, function(err, hospitals) {
                 if (err) {
                     console.log(err)
                 }
 
                 hospitals.forEach(function(hosp) {
-                    console
+                        var surveyDateVal = new Date();
+                        try {
+                            surveyDateVal = new Date(hosp.date_of_survey);
+                            console.log(surveyDateVal)
+                        }catch(e) {
+                            surveyDateVal = new Date();
+                            console.log('date error');
+                        }
                     var data = {
-                facilityName: hosp.facility_name,
-                facilityTypeDisplay: hosp.facility_type_display,
-                maternalHealth: (hosp.maternal_health_delivery_services== 'TRUE') ? true : false,
-                latitude: isNaN(parseFloat(hosp.latitude)) ? 0.0000 : parseFloat(hosp.latitude),
-                longitude: isNaN(parseFloat(hosp.longitude)) ? 0.0000 : parseFloat(hosp.longitude),
-                location: {
-                    type: "Point",
-                    coordinates: [(isNaN(parseFloat(hosp.longitude)) ? 0.0000 : parseFloat(hosp.latitude)), (isNaN(parseFloat(hosp.latitude)) ? 0.0000 : parseFloat(hosp.latitude))]
-                }
-            }
+                        facilityName: hosp.facility_name,
+                        facilityTypeDisplay: hosp.facility_type_display,
+                        maternalHealth: (hosp.maternal_health_delivery_services == 'TRUE') ? true : false,
+                        emergencyTransport: (hosp.emergency_transport == 'TRUE') ? true : false,
+                        skilledBirthAttendant: (hosp.skilled_birth_attendant == 'TRUE') ? true : false,
+                        numChewsFulltime: isNaN(parseInt(hosp.num_chews_fulltime)) ? 0 : parseInt(hosp.num_chews_fulltime),
+                        phcnElectricity: (hosp.phcn_electricity == 'TRUE') ? true : false,
+                        cSectionYn: (hosp.c_section_yn == 'TRUE') ? true : false,
+                        childHealthMeaslesImmunCalc: (hosp.child_health_measles_immun_calc == 'TRUE') ? true : false,
+                        numNursesFulltime: isNaN(parseInt(hosp.num_nurses_fulltime)) ? 0 : parseInt(hosp.num_nurses_fulltime),
+                        numNurseMidwivesFulltime: isNaN(parseInt(hosp.num_nursemidwives_fulltime)) ? 0 : parseInt(hosp.num_nursemidwives_fulltime),
+                        numDoctorsFulltime: isNaN(parseInt(hosp.num_doctors_fulltime)) ? 0 : parseInt(hosp.num_doctors_fulltime),
+                       // surveyDate: surveyDateVal,
+                        facilityId: hosp.facilityId,
+                        community: hosp.community,
+                        ward: hosp.ward,
+                        management: hosp.management,
+                        improvedWaterSupply: (hosp.improved_water_supply == 'TRUE') ? true : false,
+                        improvedSanitation: (hosp.improved_sanitation == 'TRUE') ? true : false,
+                        vaccineFridge: (hosp.vaccines_fridge_freezer == 'TRUE') ? true : false,
+                        antenatalCareYn: (hosp.antenatal_care_yn == 'TRUE') ? true : false,
+                        familyPlanningYn: (hosp.family_planning_yn == 'TRUE') ? true : false,
+                        malariaTreatmentArtemisinin: (hosp.malaria_treatment_artemisinin == 'TRUE') ? true : false,
+                        sector : hosp.sector,
+                        photoId : hosp.formhub_photo_id,
+                        surveyId : hosp.survey_id,
+                        uniqueLga : hosp.uniqueLga,
+                        latitude: isNaN(parseFloat(hosp.latitude)) ? 0.0000 : parseFloat(hosp.latitude),
+                        longitude: isNaN(parseFloat(hosp.longitude)) ? 0.0000 : parseFloat(hosp.longitude),
+                        location: {
+                            type: "Point",
+                            coordinates: [(isNaN(parseFloat(hosp.longitude)) ? 0.0000 : parseFloat(hosp.latitude)), (isNaN(parseFloat(hosp.latitude)) ? 0.0000 : parseFloat(hosp.latitude))]
+                        }
+                    }
+                    console.log(data)
                     hospitalsData.push(data);
                 })
                 Hospital.create(hospitalsData).exec(function cb(err, hospitals) {
@@ -94,7 +126,7 @@ module.exports.bootstrap = function(cb) {
                         Setup.update(setup.id, {
                             hospitalsLoaded: true
                         }).exec(function cb(err, setup) {
-                            if(err){
+                            if (err) {
                                 console.log(err)
                             }
                             console.log("Hospitals initialized successfully")
@@ -132,16 +164,16 @@ module.exports.bootstrap = function(cb) {
 
                 });
             }
-               Hospital.native(function(err, collection) {
-            collection.ensureIndex({
-                location: '2dsphere'
-            }, function() {});
-        });
+            Hospital.native(function(err, collection) {
+                collection.ensureIndex({
+                    location: '2dsphere'
+                }, function() {});
+            });
             cb();
         })
         .catch(function(err) {
             console.log(err);
             console.log("Error checking for setup");
         });
-        
+
 };
