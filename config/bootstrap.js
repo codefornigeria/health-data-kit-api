@@ -46,7 +46,7 @@ module.exports.bootstrap = function(cb) {
                         console.log(err)
                     }
                     if (doctors) {
-                        Setup.update(setup.id, {
+                        Setup.update({id:setup.id}, {
                             doctorsLoaded: true
                         }).exec(function cb(err, setup) {
                             console.log("Doctors initialized successfully")
@@ -113,7 +113,6 @@ module.exports.bootstrap = function(cb) {
                             coordinates: [(isNaN(parseFloat(hosp.longitude)) ? 0.0000 : parseFloat(hosp.latitude)), (isNaN(parseFloat(hosp.latitude)) ? 0.0000 : parseFloat(hosp.latitude))]
                         }
                     }
-                    console.log(data)
                     hospitalsData.push(data);
                 })
                 Hospital.create(hospitalsData).exec(function cb(err, hospitals) {
@@ -121,7 +120,7 @@ module.exports.bootstrap = function(cb) {
                         console.log(err)
                     }
                     if (hospitals) {
-                        Setup.update(setup.id, {
+                        Setup.update({id:setup.id}, {
                             hospitalsLoaded: true
                         }).exec(function cb(err, setup) {
                             if (err) {
