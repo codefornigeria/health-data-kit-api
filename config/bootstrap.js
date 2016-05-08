@@ -11,7 +11,7 @@
 var csvParser = require('csv');
 var fs = require('fs');
 module.exports.bootstrap = function(cb) {
-    console.log(sails.config.appPath)
+
 
     // It's very important to trigger this callback method when you are finished
     // with the bootstrap!  (otherwise your server will never lift, since it's waiting on the bootstrap)
@@ -30,7 +30,7 @@ module.exports.bootstrap = function(cb) {
                 }
 
                 doctors.forEach(function(doc) {
-                    console
+                  
                     var data = {
                         name: doc.Name,
                         address: doc.Address,
@@ -75,11 +75,9 @@ module.exports.bootstrap = function(cb) {
                         var surveyDateVal = new Date();
                         try {
                             surveyDateVal = new Date(hosp.date_of_survey);
-                            console.log(surveyDateVal)
                         }catch(e) {
                             surveyDateVal = new Date();
-                            console.log('date error');
-                        }
+                         }
                     var data = {
                         facilityName: hosp.facility_name,
                         facilityTypeDisplay: hosp.facility_type_display,
