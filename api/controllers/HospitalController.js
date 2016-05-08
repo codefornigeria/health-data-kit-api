@@ -329,7 +329,6 @@ module.exports = {
             if (data.name) {
                 criteria.facilityName = { 'startsWith': data.name };
             }
-            console.log('searching for hospitals')
             Hospital.native(function(err, collection) {
                         if (err) {
                             return ResponseService.json(200, res, "Hospitals not found", [])

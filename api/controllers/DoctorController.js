@@ -442,7 +442,6 @@ module.exports = {
             criteria.telephone = req.query.telephone;
         }
 
-        console.log('criteria');
         Doctor.count(criteria).then(function(count) {
             var findQuery = Doctor.find(criteria).populateAll()
                 .sort('createdAt DESC')
