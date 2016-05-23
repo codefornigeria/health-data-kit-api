@@ -15,14 +15,14 @@ module.exports = {
         slug: {
             type: 'string',
         },
-        content : {
+        body : {
             type : 'string',
         },
         category : {
             model: 'category'
-        },  
+        },
         images : {
-            collection :'image'.
+            collection :'image',
             via :'content'
         },
         videos : {

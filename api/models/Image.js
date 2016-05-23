@@ -27,6 +27,9 @@ module.exports = {
         fileSize:{
             type: 'integer'
         },
+        content : {
+            model : 'content'
+        },
         isDeleted : {
             type : 'boolean' , 
             defaultsTo : false
