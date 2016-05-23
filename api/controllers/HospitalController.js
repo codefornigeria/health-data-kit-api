@@ -362,7 +362,7 @@ module.exports = {
             collection.geoNear({ type: "Point", coordinates: [parseFloat(data.longitude), parseFloat(data.latitude)] },
          {
                 limit: 30,
-                maxDistance: 1000, // in meters
+                maxDistance: 10000, // in meters
                 query: criteria, // allows filtering
                 distanceMultiplier: 0.1,// 3959, // converts radians to miles (use 6371 for km)
                 spherical: true
