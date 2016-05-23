@@ -321,14 +321,39 @@ module.exports = {
         var data = req.body;
         var pagination = {
             page: parseInt(req.query.page) || 1,
-            limit: parseInt(req.query.perPage) || 10
+            limit: parseInt(req.query.perPage) || 30
         };
         var criteria = {
             isDeleted: false
         };
-        if (data.name) {
-            criteria.facilityName = { 'startsWith': data.name };
+        if (data.service=='Ambulance') {
+            criteria.emergencyTransport =  true;
         }
+         if (data.service=='Maternal health delivery') {
+            criteria.maternalHealth =  true;
+        }
+
+         if (data.service=='Birth attendants') {
+            criteria.skilledBirthAttendant =  true;
+        }
+  if (data.service=='C section') {
+            criteria.cSectionYn =  true;
+        }
+
+         if (data.service=='Measles immunization') {
+            criteria.childHealthMeaslesImmunCalc =  true;
+        }
+         if (data.service=='Ante-natal care') {
+            criteria.antenatalCareYn =  true;
+        }
+         if (data.service=='Family planning') {
+            criteria.familyPlanningYn =  true;
+        }
+         if (data.service=='Malaria treatment') {
+            criteria.malariaTreatmentArtemisinin =  true;
+        }
+
+
         Hospital.native(function(err, collection) {
             if (err) {
                 return ResponseService.json(200, res, "Hospitals not found", [])
@@ -337,9 +362,9 @@ module.exports = {
             collection.geoNear({ type: "Point", coordinates: [parseFloat(data.longitude), parseFloat(data.latitude)] },
          {
                 limit: 30,
-                maxDistance: 100, // in meters
-                //query: {}, // allows filtering
-                distanceMultiplier: 6371,// 3959, // converts radians to miles (use 6371 for km)
+                maxDistance: 1000, // in meters
+                query: criteria, // allows filtering
+                distanceMultiplier: 0.1,// 3959, // converts radians to miles (use 6371 for km)
                 spherical: true
             }, function(err, hospits) {
 
