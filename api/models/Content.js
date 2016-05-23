@@ -54,21 +54,18 @@ module.exports = {
 
 
     validationMessages: {
-        name: {
+        title: {
             required: 'Name is required'
         },
         address: {
-            required: 'Address is required'
+            required: 'Title is required'
         },
-        gender: {
-            required: 'Sex is required'
+        body: {
+            required: 'Body is required'
         },
-        telephone: {
-            required: 'Telephone is required'
+        slug: {
+            required: 'Slug is required'
         },
-        email: {
-            required: 'Email is required',
-            email: 'Invalid user email',
-        },
+     
     },
 };
