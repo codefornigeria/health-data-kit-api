@@ -17,6 +17,7 @@ module.exports = {
         },
         body : {
             type : 'string',
+            required : true
         },
         category : {
             model: 'category'
@@ -45,8 +46,13 @@ module.exports = {
     },
    beforeCreate: function(values, cb) {
         values.slug = slug(values.title, { lower: true });
+        if(values.image.length) {
+
+        }
         cb();
     },
+
+
     validationMessages: {
         name: {
             required: 'Name is required'
