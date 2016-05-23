@@ -12,8 +12,12 @@ module.exports = {
             type: 'string',
             required: true
         },
+        cover :  {
+            type : 'string'
+        },
         slug: {
             type: 'string',
+            unique : true
         },
         body : {
             type : 'string',
@@ -46,9 +50,7 @@ module.exports = {
     },
    beforeCreate: function(values, cb) {
         values.slug = slug(values.title, { lower: true });
-        if(values.image.length) {
-
-        }
+      
         cb();
     },
 
@@ -64,7 +66,8 @@ module.exports = {
             required: 'Body is required'
         },
         slug: {
-            required: 'Slug is required'
+            required: 'Slug is required',
+            unique : 'A Post with this Title already exists'
         },
      
     },

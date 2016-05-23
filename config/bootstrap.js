@@ -110,7 +110,7 @@ module.exports.bootstrap = function(cb) {
                         longitude: isNaN(parseFloat(hosp.longitude)) ? 0.0000 : parseFloat(hosp.longitude),
                         location: {
                             type: "Point",
-                            coordinates: [(isNaN(parseFloat(hosp.longitude)) ? 0.0000 : parseFloat(hosp.latitude)), (isNaN(parseFloat(hosp.latitude)) ? 0.0000 : parseFloat(hosp.latitude))]
+                            coordinates: [(isNaN(parseFloat(hosp.longitude)) ? 0.0000 : parseFloat(hosp.longitude)), (isNaN(parseFloat(hosp.latitude)) ? 0.0000 : parseFloat(hosp.latitude))]
                         }
                     }
                     hospitalsData.push(data);
