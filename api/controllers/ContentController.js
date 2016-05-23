@@ -328,6 +328,80 @@
                 .catch(function(err) {
                     return ValidationService.jsonResolveError(err, res);
                 });
-        }
+        },
+
+         /**
+     * @api {post} /upload  Generic file upload
+     * @apiName Multipurpose file upload
+     * @apiGroup Content
+     * @apiVersion 0.0.1
+     *
+     * @apiParam {String} file    File blob
+    * @apiParam {String} fileType    File Type
+     *
+     * @apiUse AuthSuccessResponseData
+     *
+     * @apiSuccessExample Success-Response
+     * HTTP/1.1 200 OK
+     *{
+     *  "response": {
+     *      "message": "File uploaded successfully",
+     *      "data": {
+     *          "file": "waec certificate",
+     *          "fileUrl": "https://aws.sod.eoe.com",
+     *          "fileSize": "300000",
+     *          "fileType": "image/jpeg"
+     *      }
+     *   }
+     *}
+     * @apiErrorExample Error-Response
+     * HTTP/1.1 401 File upload failed
+     * {
+     *    response: {
+     *        message: "File upload failed"
+     *    }
+     * }
+     *
+     *
+     * @apiError (Error 400) {Object} response variable holding response data
+     * @apiError (Error 400) {String} response.message response message
+    */
+
+    upload: function(req, res){
+        req.file('file').upload({
+            adapter: require('skipper-s3'),
+            key: sails.config.settings.S3_Key,
+            secret: sails.config.settings.S3_Secret,
+            bucket: sails.config.settings.S3_Bucket
+        }, function(err, filesUploaded) {
+            if (err) {
+                return ResponseService.json(400, res, "File upload failed");
+            }
+            var data = {};
+            data.fileUrl = filesUploaded[0].extra.Location;
+            data.file = filesUploaded[0].fd;
+            data.fileType = filesUploaded[0].type;
+            data.fileSize = filesUploaded[0].extra.size;
+
+            if(req.body.fileType == 'image') {
+                Image.create(data).then(function(image){
+                    if(!image) {
+                    return    ResponseService.json(400, res,"Image  upload failed");
+                    }
+                 return   ResponseService.json(200, res , "Image Uploaded successfully",image);
+                })
+            }
+            if(req.body.fileType == 'video') {
+                Video.create(data).then(function(video){
+                    if(!video) {
+                    return    ResponseService.json(400, res,"Video  upload failed");
+                    }
+                  return  ResponseService.json(200, res , "Video Uploaded successfully",video);
+                })
+            }
+            return ResponseService.json(200, res, "File uploaded successfully", data);
+        });
+    }
+
 
     };

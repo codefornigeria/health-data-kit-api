@@ -36,6 +36,11 @@ module.exports.routes = {
     view: 'homepage'
   },
 
+   'GET /upload/' : {
+    controller : 'ContentController',
+    action : 'upload'
+  },
+  
   'POST /doctor' : {
     controller : 'DoctorController',
     action : 'create'
@@ -72,7 +77,40 @@ module.exports.routes = {
   'GET /hospital' : {
     controller : 'HospitalController',
     action : 'list'
-  }
+  },
+
+  'POST /content' : {
+    controller : 'ContentController',
+    action : 'create'
+  },
+  'POST /content/search' : {
+    controller : 'ContentController',
+    action : 'search'
+  },
+  'GET /content' : {
+    controller : 'ContentController',
+    action : 'list'
+  },
+
+   'GET /content/:id' : {
+    controller : 'ContentController',
+    action : 'view'
+  },
+
+   'PUT /content/:id' : {
+    controller : 'ContentController',
+    action : 'update'
+  },
+
+   'DELETE /content/:id' : {
+    controller : 'ContentController',
+    action : 'delete'
+  },
+  
+  
+
+
+  
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *
