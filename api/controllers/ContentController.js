@@ -240,7 +240,7 @@
             }
 
             Content.findOne(criteria).then(function(content) {
-                    if (!contnent) {
+                    if (!content) {
                         return ResponseService.json(200, res, "Content not found");
                     }
                     return ResponseService.json(200, res, "Content retrieved successfully", content);
