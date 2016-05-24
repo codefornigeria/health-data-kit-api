@@ -48,6 +48,12 @@ module.exports = {
         return doctorQry;
     },
 
+  beforeCreate: function(values, cb) {
+        values.name = values.name.toLowerCase();
+      
+        cb();
+    },
+
     validationMessages: {
         name: {
             required: 'Name is required'

@@ -108,6 +108,13 @@ module.exports = {
         }
 
     },
+      beforeCreate: function(values, cb) {
+        values.facilityName = values.facilityName.toLowerCase();
+      
+        cb();
+    },
+
+
     validationMessages: {
         facilityName : {
             required : 'Facility Name is required'
