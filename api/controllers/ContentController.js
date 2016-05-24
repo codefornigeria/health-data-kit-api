@@ -239,7 +239,7 @@
                 id: req.params.id
             }
 
-            Content.findOne(criteria).then(function(contnent) {
+            Content.findOne(criteria).then(function(content) {
                     if (!contnent) {
                         return ResponseService.json(200, res, "Content not found");
                     }
