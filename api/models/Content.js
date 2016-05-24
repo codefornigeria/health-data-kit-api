@@ -39,15 +39,6 @@ module.exports = {
             defaultsTo:false
         }
     },
-    validateDoctor: function(options) {
-
-        var doctorQry = Doctor.findOne({
-            name: options.name,
-            email: options.email,
-            gender : options.gender
-        })
-        return doctorQry;
-    },
    beforeCreate: function(values, cb) {
         values.slug = slug(values.title, { lower: true });
       
@@ -57,13 +48,14 @@ module.exports = {
 
     validationMessages: {
         title: {
-            required: 'Name is required'
+            required: 'Title is required',
+            string: 'Title cannot be empty'
         },
-        address: {
-            required: 'Title is required'
-        },
+      
         body: {
-            required: 'Body is required'
+            required: 'Body is required',
+                string: 'body cannot be empty'
+        
         },
         slug: {
             required: 'Slug is required',
