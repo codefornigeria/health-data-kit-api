@@ -89,7 +89,7 @@
          * @apiError (Error 400) {String} response.message response message
          */
         create: function(req, res) {
-
+            console.log(req.body)
             Content.create(req.body).then(function(content) {
                 return ResponseService.json(200, res, " Content created successfully", content);
             }).catch(function(err) {
