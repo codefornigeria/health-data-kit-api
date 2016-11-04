@@ -9,7 +9,9 @@
  * http://sailsjs.org/#/documentation/reference/sails.config/sails.config.bootstrap.html
  */
 var csvParser = require('csv');
+var parseXlsx = require('excel');
 var fs = require('fs');
+var S = require('string');
 module.exports.bootstrap = function(cb) {
 
 
@@ -30,7 +32,7 @@ module.exports.bootstrap = function(cb) {
                 }
 
                 doctors.forEach(function(doc) {
-                  
+
                     var data = {
                         name: doc.Name,
                         address: doc.Address,
@@ -62,6 +64,7 @@ module.exports.bootstrap = function(cb) {
         fs.readFile(sails.config.appPath + '/config/hospitals.csv', 'utf8', function(err, hospitalscsv) {
             if (err) {
                 console.log(err);
+                return;
             }
 
             csvParser.parse(hospitalscsv, {
@@ -134,6 +137,60 @@ module.exports.bootstrap = function(cb) {
         })
     }
 
+    var setupPharmacy = function(setup){
+
+
+
+
+             var pharmacyData = sails.config.pharmacies.map(function(data){
+            data.name = S(data.name).chompLeft('. ').s
+            return data
+          })
+                  Pharmacy.create(pharmacyData).exec(function cb(err, pharmac) {
+                      if (err) {
+                          console.log(err)
+                      }
+                      if (pharmac) {
+                          Setup.update({id:setup.id}, {
+                              pharmacyLoaded: true
+                          }).exec(function cb(err, setup) {
+                              if (err) {
+                                  console.log(err)
+                              }
+                              console.log("Pharmacy initialized successfully")
+                          });
+                      }
+                  });
+
+
+          // fs.readFile(sails.config.appPath + '/config/pharmacy.csv', 'utf8', function(err, pharmacycsv) {
+          //     if (err) {
+          //         console.log(err);
+          //         return;
+          //     }
+          //
+          //     csvParser.parse(pharmacycsv, {
+          //         columns: ['name', 'addresss']
+          //     }, function(err, pharmacies) {
+          //         if (err) {
+          //             console.log(err)
+          //             return
+          //         }
+          //
+          //         pharmacies.forEach(function(pharm) {
+          //
+          //             var data = {
+          //                 name : pharm.name ,
+          //                 address: pharm.address
+          //                   }
+          //             }
+          //             pharmacyData.push(data);
+          //         })
+
+          //     })
+          // })
+
+    }
     var setupMedicine = function(setup) {
 
     }
@@ -153,11 +210,16 @@ module.exports.bootstrap = function(cb) {
                     // console.log('template is false')
                     setupMedicine(setup);
                 }
+                if (setup[0].pharmacyLoaded == false) {
+                    // console.log('template is false')
+                    setupPharmacy(setup);
+                }
             } else {
                 Setup.create({}).then(function(newSetup) {
                     setupDoctors(newSetup);
                     setupHospitals(newSetup);
                     setupMedicine(newSetup);
+                    setupPharmacy(setup);
 
                 });
             }

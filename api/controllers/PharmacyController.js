@@ -227,8 +227,8 @@ module.exports = {
     },
 
     /**
-         * @api {post} /hospital/search Search Hopsitals
-         * @apiName Search  Hospitals
+         * @api {post} /pharmacy/search Search Hopsitals
+         * @apiName Search  Pharmacy
          * @apiGroup Pharmacy
          * @apiVersion 0.0.1
          *
@@ -290,64 +290,31 @@ module.exports = {
          * @apiError (Error 400) {Object} response variable holding response data
          * @apiError (Error 400) {String} response.message response message
          */
-    search: function(req, res) {
-        var data = req.body;
-        var pagination = {
-            page: parseInt(req.query.page) || 1,
-            limit: parseInt(req.query.perPage) || 30
-        };
-        var criteria = {
-            isDeleted: false
-        };
-        if (data.service=='Ambulance') {
-            criteria.emergencyTransport =  true;
-        }
-         if (data.service=='Maternal health delivery') {
-            criteria.maternalHealth =  true;
-        }
 
-         if (data.service=='Birth attendants') {
-            criteria.skilledBirthAttendant =  true;
-        }
-  if (data.service=='C section') {
-            criteria.cSectionYn =  true;
-        }
+         search: function(req, res) {
+            var pagination = {
+                page: parseInt(req.query.page) || 1,
+                limit: parseInt(req.query.perPage) || 10
+            };
 
-         if (data.service=='Measles immunization') {
-            criteria.childHealthMeaslesImmunCalc =  true;
-        }
-         if (data.service=='Ante-natal care') {
-            criteria.antenatalCareYn =  true;
-        }
-         if (data.service=='Family planning') {
-            criteria.familyPlanningYn =  true;
-        }
-         if (data.service=='Malaria treatment') {
-            criteria.malariaTreatmentArtemisinin =  true;
-        }
+            var criteria = {
+                isDeleted: false
+            };
 
-
-        Hospital.native(function(err, collection) {
-            if (err) {
-                return ResponseService.json(200, res, "Hospitals not found", [])
+            if (req.query.name) {
+                criteria.name ={
+                    'startsWith': req.query.name
+                }; // change this to starts with  or endswith
             }
 
-            collection.geoNear({ type: "Point", coordinates: [parseFloat(data.longitude), parseFloat(data.latitude)] },
-         {
-                limit: 30,
-                maxDistance: 10000, // in meters
-                query: criteria, // allows filtering
-                distanceMultiplier: 0.1,// 3959, // converts radians to miles (use 6371 for km)
-                spherical: true
-            }, function(err, hospits) {
+            Pharmacy.count(criteria).then(function(count) {
+                var findQuery = Pharmacy.find(criteria)
+                    .sort('createdAt DESC')
+                    .paginate(pagination);
+                return [count, findQuery]
 
-                if (err) {
-                    console.log(err)
-                    return ResponseService.json(200, res, "Hospitals not found", [])
-
-                }
-                if (hospits.results.length) {
-                    var count = hospits.results.length;
+            }).spread(function(count, pharmacy) {
+                if (pharmacy.length) {
                     var numberOfPages = Math.ceil(count / pagination.limit)
                     var nextPage = parseInt(pagination.page) + 1;
                     var meta = {
@@ -358,17 +325,14 @@ module.exports = {
                         pageCount: numberOfPages,
                         total: count
                     }
-                    return ResponseService.json(200, res, " Hospitals retrieved successfully", hospits.results, meta);
+                    return ResponseService.json(200, res, " Pharmacys retrieved successfully", pharmacy, meta);
                 } else {
-                    return ResponseService.json(200, res, "Hospitals not found", [])
+                    return ResponseService.json(200, res,"Pharmacys not found", [])
                 }
-
-            })
-
-        })
-
-
-    },
+            }).catch(function(err) {
+                return ValidationService.jsonResolveError(err, res);
+            });
+         },
 
 
     /**

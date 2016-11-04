@@ -40,11 +40,11 @@ module.exports.routes = {
     controller : 'ContentController',
     action : 'upload'
   },
-  
+
   'POST /doctor' : {
     controller : 'DoctorController',
     action : 'create'
-  } , 
+  } ,
   'GET /doctor' : {
     controller : 'DoctorController',
     action : 'list'
@@ -54,10 +54,10 @@ module.exports.routes = {
     action : 'search'
   },
   'GET /doctor/:id': {
-    controller : 'DoctorController', 
+    controller : 'DoctorController',
     action : 'view'
   },
-  
+
   'PUT /doctor/:id' : {
     controller : 'DoctorController',
     action : 'update'
@@ -83,7 +83,12 @@ module.exports.routes = {
     controller : 'HospitalController',
     action : 'nhis'
   },
-  
+
+  'POST /pharmacy/search' : {
+    controller: 'PharmacyController',
+    action : 'search'
+  },
+
 
   'POST /content' : {
     controller : 'ContentController',
@@ -112,11 +117,11 @@ module.exports.routes = {
     controller : 'ContentController',
     action : 'delete'
   },
-  
-  
 
 
-  
+
+
+
   /***************************************************************************
   *                                                                          *
   * Custom routes here...                                                    *

@@ -19,7 +19,10 @@ module.exports = {
     medicinesLoaded : {
         type : 'boolean',
         defaultsTo:false
+    },
+    pharmacyLoaded : {
+      type : 'boolean',
+      defaultsTo : false
     }
   }
 };
-
