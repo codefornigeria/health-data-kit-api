@@ -79,6 +79,12 @@ module.exports.routes = {
     action : 'list'
   },
 
+  'GET /nhis-hospital' : {
+    controller : 'HospitalController',
+    action : 'nhis'
+  },
+  
+
   'POST /content' : {
     controller : 'ContentController',
     action : 'create'

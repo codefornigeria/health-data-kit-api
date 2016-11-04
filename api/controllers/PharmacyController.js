@@ -1,72 +1,58 @@
 /**
- * HospitalController
+ * PharmacyController
  *
- * @description :: Server-side logic for managing Hospitals
+ * @description :: Server-side logic for managing Pharmacies
  * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
  */
 
-/**
- * DoctorController
- *
- * @description :: Server-side logic for managing hospitals
- * @help        :: See http://sailsjs.org/#!/documentation/concepts/Controllers
- */
 
 var Promise = require('bluebird');
 var Converter = require("csvtojson").Converter;
 var converter = new Converter({});
 
 converter.on("end_parsed", function (jsonArray) {
-   console.log(jsonArray); //here is your result jsonarray 
+   console.log(jsonArray); //here is your result jsonarray
 });
 
 var fs = require('fs');
 module.exports = {
     /**
-     * @apiDefine HospitalSuccessResponseData
+     * @apiDefine PharmacySuccessResponseData
      * @apiSuccess {Object} response variable holding response data
      * @apiSuccess {String} response.message response message
      * @apiSuccess {Object} response.data variable holding actual data
      */
 
     /**
-     * @apiDefine  HospitalHeader
+     * @apiDefine  PharmacyHeader
      * @apiHeader {String} Authorization Basic authorization header token
      */
 
 
     /**
-     * @api {post} /Hospital Create Hospital
-     * @apiName Create Hospital
-     * @apiGroup Hospital
+     * @api {post} /pharmacy Create Pharmacy
+     * @apiName Create Pharmacy
+     * @apiGroup Pharmacy
      * @apiVersion 0.0.1
      *
-     *   @apiUse HospitalHeader
-     * 
+     *   @apiUse PharmacyHeader
      *
-     * @apiParam {String} name  doctor name
-     * @apiParam {String} address Doctor address
-     * @apiParam {String} [specialization] Doctor Specialization
-     * @apiParam {String} telephone Doctor Telephone Number
-     * @apiParam {String} email Doctor Email Address
-     * @apiParam {String} picture Doctor avatar
      *
-     * @apiUse HospitalSuccessResponseData
+     * @apiParam {String} name  Pharmacy name
+     * @apiParam {String} address Pharmacy address
+     * @apiParam {Boolean} active Pharmacy active ?
+     *
+     * @apiUse PharmacySuccessResponseData
      *
      * @apiSuccessExample Success-Response
      * HTTP/1.1 200 OK
      * {
      *     "response": {
-     *     "message": "Course created successfully",
+     *     "message": "Pharmacy created successfully",
      *     "data": {
-     *         "school": "56ac782720d141560b2bf08f",
-     *         "faculty": "56ac8a42aad4b35e0e091e13",
-     *         "name": "Quantum Physics",
-     *         "coursecode": "PHY301",
-     *         "description": "Quantum Physics",
-     *         "discipline": "56ac9df6d984e2aa11863212",
-     *         "unit": 4,
+     *           "name" : 'Boluwatife Pharmacy',
      *         "active": true,
+     *         address : "no 4 boluwatife street lagos",
      *         "isDeleted": false,
      *         "createdAt": "2016-01-30T11:18:30.284Z",
      *         "updatedAt": "2016-01-30T11:18:30.284Z",
@@ -82,49 +68,28 @@ module.exports = {
      * "response": {
      * "message": "Validation error has occured",
      * "errors": {
-     * "school": [
+     * "name": [
      * {
      *     "rule": "required",
-     *     "message": "School is required"
+     *     "message": "name is required"
      *  }
      *  ],
-     *  "faculty": [
+     *  "address": [
      *   {
      *      "rule": "required",
-     *      "message": "Faculty is required"
+     *      "message": "address is required"
      *      }
      *    ],
-     *  "name": [
-     *  {
-     *    "rule": "string",
-     *    "message": "`undefined` should be a string (instead of \"null\", which is a object)"
-     *    },
-     *    {
-     *    "rule": "required",
-     *    "message": "Name is required"
-     *    }
-     *    ],
-     *    "unit": [
-     *    {
-     *    "rule": "integer",
-     *    "message": "`undefined` should be a integer (instead of \"null\", which is a object)"
-     *    },
-     *    {
-     *    "rule": "required",
-     *    "message": "Unit is required"
-     *    }
-     *    ]
-     *    }
      *    }
      *    }
      * @apiErrorExample Error-Response
      * HTTP/1.1 400 Bad Request
      * {
      * "response": {
-     * "message": "Cannot Create Existing Course",
+     * "message": "Cannot Create Existing Pharmacy",
      *    }
      *    }
-     *    
+     *
      *
      * @apiError (Error 400) {Object} response variable holding response data
      * @apiError (Error 400) {String} response.message response message
@@ -166,23 +131,23 @@ module.exports = {
     /**
      * @api {post} /hospitals Batch Create Hospitals
      * @apiName Batch Create Hospitals
-     * @apiGroup Hospital
+     * @apiGroup Pharmacy
      * @apiVersion 0.0.1
      *
-     *   @apiUse HospitalHeader
-     * 
+     *   @apiUse PharmacyHeader
+     *
      *
      * @apiParam {object[]} courses  courses
      * @apiParam {Integer} courses.school  school id
      * @apiParam {String} courses.faculty Faculty id
      * @apiParam {String} [courses.discipline] Discipline id
-     * @apiParam {String} courses.name course name 
-     * @apiParam {String} [courses.coursecode] course code 
-     * @apiParam {String} [courses.description] course description 
+     * @apiParam {String} courses.name course name
+     * @apiParam {String} [courses.coursecode] course code
+     * @apiParam {String} [courses.description] course description
      * @apiParam {boolean} courses.active  is active course
-     * @apiParam {String} courses.unit Course unit 
+     * @apiParam {String} courses.unit Course unit
      *
-     * @apiUse HospitalSuccessResponseData
+     * @apiUse PharmacySuccessResponseData
      *
      * @apiSuccessExample Success-Response
      * HTTP/1.1 200 OK
@@ -225,8 +190,8 @@ module.exports = {
      *    response: {
      *        message: "Course name is required"
      *    }
-     * } 
-     * 
+     * }
+     *
      *  @apiErrorExample Error-Response
      * HTTP/1.1 500 Internal Server Error
      * {
@@ -264,20 +229,20 @@ module.exports = {
     /**
          * @api {post} /hospital/search Search Hopsitals
          * @apiName Search  Hospitals
-         * @apiGroup Hospital
+         * @apiGroup Pharmacy
          * @apiVersion 0.0.1
          *
          *
-         *  @apiUse HospitalHeader
+         *  @apiUse PharmacyHeader
          * @apiParam {object} location  location
          * @apiParam {String} location.name  name of location
-         * @apiParam {String} location.longitude  location longitude  
+         * @apiParam {String} location.longitude  location longitude
          * @apiParam {String} location.latitude  location latitude
-    
-         
-         * @apiUse HospitalSuccessResponseData
+
+
+         * @apiUse PharmacySuccessResponseData
          *
-         * 
+         *
          * @apiSuccessExample Success-Response
          * HTTP/1.1 200 OK
          * {
@@ -409,15 +374,15 @@ module.exports = {
     /**
      * @api {get} /hospital List Hopsitals
      * @apiName List  Hospitals
-     * @apiGroup Hospital
+     * @apiGroup Pharmacy
      * @apiVersion 0.0.1
      *
      *
-     *  @apiUse HospitalHeader
-     *  
-     * @apiUse HospitalSuccessResponseData
+     *  @apiUse PharmacyHeader
      *
-     * 
+     * @apiUse PharmacySuccessResponseData
+     *
+     *
      * @apiSuccessExample Success-Response
      * HTTP/1.1 200 OK
      * {
@@ -512,13 +477,13 @@ module.exports = {
     /**
      * @api {get} /hospital/:id View Hospital
      * @apiName View  Hospital
-     * @apiGroup Hospital
+     * @apiGroup Pharmacy
      * @apiVersion 0.0.1
      *
-     * @apiUse HospitalHeader
+     * @apiUse PharmacyHeader
      *
      * @apiParam {String} id Hospital id
-     * @apiUse HospitalSuccessResponseData
+     * @apiUse PharmacySuccessResponseData
      *
      * @apiSuccessExample Success-Response
      * HTTP/1.1 200 OK
@@ -572,22 +537,22 @@ module.exports = {
     /**
      * @api {put} /hospital/:id Update hospital
      * @apiName Update Hospital
-     * @apiGroup Hospital
+     * @apiGroup Pharmacy
      * @apiVersion 0.0.1
      *
-     *  @apiUse HospitalHeader
-     * 
-     * @apiUse HospitalSuccessResponseData
+     *  @apiUse PharmacyHeader
      *
-     * 
+     * @apiUse PharmacySuccessResponseData
+     *
+     *
      * @apiParam {Integer} school  school id
      * @apiParam {String} faculty Faculty id
      * @apiParam {String} [discipline] Discipline id
-     * @apiParam {String} name course name 
-     * @apiParam {String} [coursecode] course code 
-     * @apiParam {String} [description] course description 
+     * @apiParam {String} name course name
+     * @apiParam {String} [coursecode] course code
+     * @apiParam {String} [description] course description
      * @apiParam {boolean} active  is active course?
-     * @apiParam {String} unit Course unit 
+     * @apiParam {String} unit Course unit
      *
      * @apiSuccessExample Success-Response
      * HTTP/1.1 200 OK
@@ -658,15 +623,15 @@ module.exports = {
     /**
      * @api {delete} /doctor/:id Delete Doctor
      * @apiName Delete Doctor
-     * @apiGroup Hospital
+     * @apiGroup Pharmacy
      * @apiVersion 0.0.1
      *
-     *  @apiUse HospitalHeader
+     *  @apiUse PharmacyHeader
      *
-     * @apiUse HospitalSuccessResponseData
+     * @apiUse PharmacySuccessResponseData
      *
      *   @apiParam {String} Doctor id
-     * 
+     *
      * @apiSuccessExample Success-Response
      * HTTP/1.1 200 OK
      * {
@@ -703,11 +668,11 @@ module.exports = {
             });
     },
 
-    nhis: function(req,res) { 
+    nhis: function(req,res) {
         var foundData = []
         Hospital.find().then(function(hospitals) {
 
-        
+
                 converter.fromFile(sails.config.appPath + '/config/nhis-hospital.csv',function(err,results){
 
             results.map(function(result){
@@ -723,12 +688,12 @@ module.exports = {
 
            console.log(results)
             return ResponseService.json(200, res, "NHIS Hospital retrieved successfully", hospitals);
- 
-        });   
+
+        });
     }).catch(function(err){
         return ValidationService.jsonResolveError(err,res);
     })
-      
+
     }
 
 };
