@@ -341,9 +341,9 @@ module.exports = {
                                     pageCount: numberOfPages,
                                     total: count
                                 }
-                                return ResponseService.json(200, res, " Hospitals retrieved successfully", pharmacs.results, meta);
+                                return ResponseService.json(200, res, " Pharmacy retrieved successfully", pharmacs.results, meta);
                             } else {
-                                return ResponseService.json(200, res, "Hospitals not found", [])
+                                return ResponseService.json(200, res, "Pharmacy not found", [])
                             }
 
                         })
