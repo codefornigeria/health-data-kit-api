@@ -292,6 +292,7 @@ module.exports = {
          */
 
          search: function(req, res) {
+             var data = req.body;
             var pagination = {
                 page: parseInt(req.query.page) || 1,
                 limit: parseInt(req.query.perPage) || 10
@@ -301,37 +302,53 @@ module.exports = {
                 isDeleted: false
             };
 
-            if (req.query.name) {
+            if (data.name) {
                 criteria.name ={
-                    'startsWith': req.query.name
+                    'startsWith': data.name
                 }; // change this to starts with  or endswith
             }
 
-            Pharmacy.count(criteria).then(function(count) {
-                var findQuery = Pharmacy.find(criteria)
-                    .sort('createdAt DESC')
-                    .paginate(pagination);
-                return [count, findQuery]
 
-            }).spread(function(count, pharmacy) {
-                if (pharmacy.length) {
-                    var numberOfPages = Math.ceil(count / pagination.limit)
-                    var nextPage = parseInt(pagination.page) + 1;
-                    var meta = {
-                        page: pagination.page,
-                        perPage: pagination.limit,
-                        previousPage: (pagination.page > 1) ? parseInt(pagination.page) - 1 : false,
-                        nextPage: (numberOfPages >= nextPage) ? nextPage : false,
-                        pageCount: numberOfPages,
-                        total: count
-                    }
-                    return ResponseService.json(200, res, " Pharmacys retrieved successfully", pharmacy, meta);
-                } else {
-                    return ResponseService.json(200, res,"Pharmacys not found", [])
-                }
-            }).catch(function(err) {
-                return ValidationService.jsonResolveError(err, res);
-            });
+
+                    Pharmacy.native(function(err, collection) {
+                        if (err) {
+                            return ResponseService.json(200, res, "Pharmacy not found", [])
+                        }
+
+                        collection.geoNear({ type: "Point", coordinates: [parseFloat(data.longitude), parseFloat(data.latitude)] },
+                     {
+                            limit: 30,
+                            maxDistance: 10000, // in meters
+                            query: criteria, // allows filtering
+                            distanceMultiplier: 0.1,// 3959, // converts radians to miles (use 6371 for km)
+                            spherical: true
+                        }, function(err, pharmacs) {
+
+                            if (err) {
+                                console.log(err)
+                                return ResponseService.json(200, res, "Pharmacy not found", [])
+
+                            }
+                            if (pharmacs.results.length) {
+                                var count = pharmacs.results.length;
+                                var numberOfPages = Math.ceil(count / pagination.limit)
+                                var nextPage = parseInt(pagination.page) + 1;
+                                var meta = {
+                                    page: pagination.page,
+                                    perPage: pagination.limit,
+                                    previousPage: (pagination.page > 1) ? parseInt(pagination.page) - 1 : false,
+                                    nextPage: (numberOfPages >= nextPage) ? nextPage : false,
+                                    pageCount: numberOfPages,
+                                    total: count
+                                }
+                                return ResponseService.json(200, res, " Hospitals retrieved successfully", pharmacs.results, meta);
+                            } else {
+                                return ResponseService.json(200, res, "Hospitals not found", [])
+                            }
+
+                        })
+
+                    })
          },
 
 
