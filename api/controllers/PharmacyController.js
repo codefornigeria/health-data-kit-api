@@ -429,7 +429,7 @@ module.exports = {
 
 
         Pharmacy.count(criteria).then(function(count) {
-            var findQuery = Hospital.find(criteria).populateAll()
+            var findQuery = Pharmacy.find(criteria).populateAll()
                 .sort('createdAt DESC')
                 .paginate(pagination);
             return [count, findQuery]
