@@ -145,6 +145,12 @@ module.exports.bootstrap = function(cb) {
 
     var pharmacyData = sails.config.pharmacies.map(function(data) {
       data.name = S(data.name).chompLeft('. ').s
+      data.latitude = isNaN(parseFloat(data.latitude)) ? 0.0000 : parseFloat(data.latitude),
+      data.longitude = isNaN(parseFloat(data.longitude)) ? 0.0000 : parseFloat(data.longitude),
+      data.location =  {
+                type: "Point",
+                coordinates: [(isNaN(parseFloat(data.longitude)) ? 0.0000 : parseFloat(data.longitude)), (isNaN(parseFloat(data.latitude)) ? 0.0000 : parseFloat(data.latitude))]
+              }
       return data
     })
     Pharmacy.create(pharmacyData).exec(function cb(err, pharmac) {
@@ -200,6 +206,12 @@ module.exports.bootstrap = function(cb) {
         });
       }
       Hospital.native(function(err, collection) {
+        collection.ensureIndex({
+          location: '2dsphere'
+        }, function() {});
+      });
+
+      Pharmacy.native(function(err, collection) {
         collection.ensureIndex({
           location: '2dsphere'
         }, function() {});

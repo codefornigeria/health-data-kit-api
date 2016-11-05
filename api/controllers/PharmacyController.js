@@ -227,7 +227,7 @@ module.exports = {
     },
 
     /**
-         * @api {post} /pharmacy/search Search Hopsitals
+         * @api {post} /pharmacy/search Search Pharmacy
          * @apiName Search  Pharmacy
          * @apiGroup Pharmacy
          * @apiVersion 0.0.1
@@ -336,7 +336,7 @@ module.exports = {
 
 
     /**
-     * @api {get} /hospital List Hopsitals
+     * @api {get} /pharmacy List Pharmacy
      * @apiName List  Hospitals
      * @apiGroup Pharmacy
      * @apiVersion 0.0.1
@@ -406,19 +406,19 @@ module.exports = {
 
 
         if (req.query.name) {
-            criteria.facilityName = req.query.name; // change this to starts with  or endswith
+            criteria.name = req.query.name; // change this to starts with  or endswith
         }
 
 
 
-        Hospital.count(criteria).then(function(count) {
+        Pharmacy.count(criteria).then(function(count) {
             var findQuery = Hospital.find(criteria).populateAll()
                 .sort('createdAt DESC')
                 .paginate(pagination);
             return [count, findQuery]
 
-        }).spread(function(count, hospitals) {
-            if (hospitals.length) {
+        }).spread(function(count, pharmacys) {
+            if (pharmacys.length) {
                 var numberOfPages = Math.ceil(count / pagination.limit)
                 var nextPage = parseInt(pagination.page) + 1;
                 var meta = {
@@ -429,9 +429,9 @@ module.exports = {
                     pageCount: numberOfPages,
                     total: count
                 }
-                return ResponseService.json(200, res, " Hospitals retrieved successfully", hospitals, meta);
+                return ResponseService.json(200, res, " Pharmacies retrieved successfully", pharmacys, meta);
             } else {
-                return ResponseService.json(200, res, "Hospitals not found", [])
+                return ResponseService.json(200, res, "Pharmacies not found", [])
             }
         }).catch(function(err) {
             return ValidationService.jsonResolveError(err, res);
@@ -439,14 +439,14 @@ module.exports = {
     },
 
     /**
-     * @api {get} /hospital/:id View Hospital
+     * @api {get} /pharmacy/:id View Pharmacy
      * @apiName View  Hospital
      * @apiGroup Pharmacy
      * @apiVersion 0.0.1
      *
      * @apiUse PharmacyHeader
      *
-     * @apiParam {String} id Hospital id
+     * @apiParam {String} id Pharmacy id
      * @apiUse PharmacySuccessResponseData
      *
      * @apiSuccessExample Success-Response
@@ -487,11 +487,11 @@ module.exports = {
             id: req.params.id
         }
 
-        Hospital.findOne(criteria).then(function(hospital) {
+        Pharmacy.findOne(criteria).then(function(pharmacy) {
                 if (!doctor) {
-                    return ResponseService.json(404, res, "Hospital not found");
+                    return ResponseService.json(404, res, "Pharmacy not found");
                 }
-                return ResponseService.json(200, res, "Hospital retrieved successfully", hospital);
+                return ResponseService.json(200, res, "Pharmacy retrieved successfully", pharmacy);
             })
             .catch(function(err) {
                 return ValidationService.jsonResolveError(err, res);
@@ -499,8 +499,8 @@ module.exports = {
     },
 
     /**
-     * @api {put} /hospital/:id Update hospital
-     * @apiName Update Hospital
+     * @api {put} /pharmacy/:id Update pharmacy
+     * @apiName Update Pharmacy
      * @apiGroup Pharmacy
      * @apiVersion 0.0.1
      *
@@ -546,14 +546,14 @@ module.exports = {
             delete data.isDeleted;
         }
 
-        Hospital.update({
+        Pharmacy.update({
                 id: req.params.id,
                 isDeleted: false
             }, data).then(function(updated) {
                 if (!updated.length) {
-                    return ResponseService.json(404, res, "Hospital not found");
+                    return ResponseService.json(404, res, "Pharmacy not found");
                 }
-                return ResponseService.json(200, res, "Hospital updated successfully", updated[0]);
+                return ResponseService.json(200, res, "Pharmacy updated successfully", updated[0]);
             })
             .catch(function(err) {
                 return ValidationService.jsonResolveError(err, res);
@@ -561,32 +561,32 @@ module.exports = {
     },
 
     batchUpdate: function(req, res) {
-        var hospitals = req.body.hospitals;
+        var hospitals = req.body.pharmacies;
 
 
         var promiseArray = [];
-        for (var i = 0, len = hospitals.length; i < len; i++) {
-            if (!hospitals[i].id) {
+        for (var i = 0, len = pharmacies.length; i < len; i++) {
+            if (!pharmacies[i].id) {
                 continue;
             }
 
             try {
                 promiseArray.push(Doctor.update({
-                    id: hospitals[i].id
-                }, hospitals[i]));
+                    id: pharmacies[i].id
+                }, pharmacies[i]));
             } catch (e) {
                 return ResponseService.json(500, res, "Internal Error: Please check inputs");
             }
         }
-        Promise.all(promiseArray).then(function(hospitals) {
-            return ResponseService.json(200, res, "Hospitals updated successfully", hospitals);
+        Promise.all(promiseArray).then(function(pharmacies) {
+            return ResponseService.json(200, res, "Hospitals updated successfully", pharmacies);
         });
     },
 
 
     /**
-     * @api {delete} /doctor/:id Delete Doctor
-     * @apiName Delete Doctor
+     * @api {delete} /pharmacy/:id Delete Pharmacy
+     * @apiName Delete Pharmacy
      * @apiGroup Pharmacy
      * @apiVersion 0.0.1
      *
@@ -594,13 +594,13 @@ module.exports = {
      *
      * @apiUse PharmacySuccessResponseData
      *
-     *   @apiParam {String} Doctor id
+     * @apiParam {String} Pharmacy id
      *
      * @apiSuccessExample Success-Response
      * HTTP/1.1 200 OK
      * {
      *    response: {
-     *        message: "Doctor deleted successfully",
+     *        message: "Pharmacy deleted successfully",
      * }
      *
      *
@@ -608,7 +608,7 @@ module.exports = {
      * HTTP/1.1 404 Not Found
      * {
      *    response: {
-     *        message: "Doctor not found"
+     *        message: "Pharmacy not found"
      *    }
      * }
      *
@@ -616,16 +616,16 @@ module.exports = {
      * @apiError (Error 400) {String} response.message response message
      */
     delete: function(req, res) {
-        Hospitals.update({
+        Pharmacy.update({
                 id: req.params.id,
                 isDeleted: false
             }, {
                 isDeleted: true
             }).then(function(deleted) {
                 if (!deleted.length) {
-                    return ResponseService.json(404, res, "Hospital not found");
+                    return ResponseService.json(404, res, "Pharmacy not found");
                 }
-                return ResponseService.json(200, res, "Hospital deleted successfully");
+                return ResponseService.json(200, res, "Pharmacy deleted successfully");
             })
             .catch(function(err) {
                 return ValidationService.jsonResolveError(err, res);

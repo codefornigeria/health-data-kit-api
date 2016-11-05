@@ -17,6 +17,16 @@ module.exports = {
             type: 'string',
             required: true
         },
+        longitude: {
+            type: 'float'
+        },
+        latitude: {
+            type: 'float'
+        },
+        location : {
+          type: 'json'
+        },
+
         active : {
           type : 'boolean',
           defaultsTo : true
