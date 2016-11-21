@@ -61,6 +61,21 @@ module.exports.bootstrap = function(cb) {
     })
 
   }
+
+  var processsLga =function(lga) {
+    var lga_Array = lga.split('_');
+    var uniqueLGA = '';
+    var uniqueState = '';
+    if(lga_Array[0].trim() =='cross'){
+      uniqueState = lga_Array.splice(0,2).join(' ');
+      uniqueLGA = lga_Array.join(' ')
+    }else {
+      uniqueState = lga_Array.splice(0,1).join(' ');
+      uniqueLGA = lga_Array.join(' ')
+
+    }
+      return [uniqueLGA, uniqueState]
+  }
   var setupHospitals = function(setup) {
     var hospitalsData = [];
     fs.readFile(sails.config.appPath + '/config/hospitals.csv', 'utf8', function(err, hospitalscsv) {
@@ -83,6 +98,7 @@ module.exports.bootstrap = function(cb) {
           } catch (e) {
             surveyDateVal = new Date();
           }
+           var lgaData =processsLga(hosp.unique_lga);
           var data = {
             facilityName: hosp.facility_name,
             facilityTypeDisplay: hosp.facility_type_display,
@@ -110,7 +126,8 @@ module.exports.bootstrap = function(cb) {
             sector: hosp.sector,
             photoId: hosp.formhub_photo_id,
             surveyId: hosp.survey_id,
-            uniqueLga: hosp.uniqueLga,
+            uniqueLga: lgaData[0],
+            uniqueState: lgaData[1],
             latitude: isNaN(parseFloat(hosp.latitude)) ? 0.0000 : parseFloat(hosp.latitude),
             longitude: isNaN(parseFloat(hosp.longitude)) ? 0.0000 : parseFloat(hosp.longitude),
             location: {
@@ -185,7 +202,7 @@ module.exports.bootstrap = function(cb) {
           setupDoctors(setup[0]);
         }
         if (setup[0].hospitalsLoaded == false) {
-          // console.log('template is false')
+          console.log('template is false')
           setupHospitals(setup[0]);
         }
         if (setup[0].medicinesLoaded == false) {
@@ -213,7 +230,9 @@ module.exports.bootstrap = function(cb) {
 
       Pharmacy.native(function(err, collection) {
         collection.ensureIndex({
-          location: '2dsphere'
+          location: '2dsphere',
+          address: 'text',
+          name:'text'
         }, function() {});
       });
       cb();

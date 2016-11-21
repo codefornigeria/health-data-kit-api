@@ -302,9 +302,9 @@ module.exports = {
                 isDeleted: false
             };
 
-            if (data.name) {
-                criteria.name ={
-                    'startsWith': data.name
+            if (data.address) {
+                criteria.address ={
+                    'contains': data.address.toLowerCase()
                 }; // change this to starts with  or endswith
             }
 
@@ -343,7 +343,7 @@ module.exports = {
                                 }
                                 return ResponseService.json(200, res, " Pharmacy retrieved successfully", pharmacs.results, meta);
                             } else {
-                                return ResponseService.json(200, res, "Pharmacy not found", [])
+                                return ResponseService.json(200, res, "Pharmacy not found", []);
                             }
 
                         })

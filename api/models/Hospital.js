@@ -40,7 +40,7 @@ module.exports = {
 
         numNursesFulltime : {
             type: 'integer'
-        } , 
+        } ,
         numNurseMidwivesFulltime : {
             type : 'integer'
         },
@@ -102,15 +102,18 @@ module.exports = {
         uniqueLga : {
             type : 'string'
         },
+        uniqueState : {
+            type : 'string'
+        },
         isDeleted : {
-            type : 'boolean', 
+            type : 'boolean',
             defaultsTo : false
         }
 
     },
       beforeCreate: function(values, cb) {
         values.facilityName = values.facilityName.toLowerCase();
-      
+
         cb();
     },
 

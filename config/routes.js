@@ -74,6 +74,10 @@ module.exports.routes = {
     controller : 'HospitalController',
     action : 'search'
   },
+  'POST /hospital/searchlga' : {
+    controller : 'HospitalController',
+    action : 'searchLGA'
+  },
   'GET /hospital' : {
     controller : 'HospitalController',
     action : 'list'
