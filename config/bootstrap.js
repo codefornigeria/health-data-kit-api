@@ -62,6 +62,41 @@ module.exports.bootstrap = function(cb) {
 
   }
 
+  var setupLga = function(setup) {
+    var lgaDatas = []
+    fs.readFile(sails.config.appPath + '/assets/lga.json', function(err, lgadata) {
+      if (err) {
+        console.log(err)
+      }
+
+      var lgaDataJson = JSON.parse(lgadata);
+      lgaDataJson.features.forEach(function(lga) {
+        var data = {
+          name: lga.properties.lganame.toLowerCase(),
+          lgaCode: lga.properties.lgacode,
+          amapCode: lga.properties.amapcode
+            // location: {
+            //     type: lga.geometry.type,
+            //     coordinates: lga.geometry.coordinates
+            // }
+        }
+        lgaDatas.push(data)
+      })
+      Lga.create(lgaDatas).exec(function cb(err, lgas) {
+        if (err) {
+          console.log(err)
+        }
+        if (lgas) {
+          Setup.update(setup.id, {
+            lgaLoaded: true
+          }).exec(function cb(err, setup) {
+            console.log('lgas initialized successfully')
+          })
+        }
+      })
+    })
+  }
+
   var processsLga =function(lga) {
     var lga_Array = lga.split('_');
     var uniqueLGA = '';
@@ -198,6 +233,10 @@ module.exports.bootstrap = function(cb) {
       // console.log(setup)
       if (setup.length) {
         // console.log('setup  called')
+        if (setup[0].lgaLoaded == false) {
+          // console.log('template is false')
+          setupLga(setup[0]);
+        }
         if (setup[0].doctorsLoaded == false) {
           setupDoctors(setup[0]);
         }
@@ -213,8 +252,10 @@ module.exports.bootstrap = function(cb) {
           // console.log('template is false')
           setupPharmacy(setup[0]);
         }
+
       } else {
         Setup.create({}).then(function(newSetup) {
+          setupLga(newSetup);
           setupDoctors(newSetup);
           setupHospitals(newSetup);
           setupMedicine(newSetup);

@@ -23,6 +23,10 @@ module.exports = {
     pharmacyLoaded : {
       type : 'boolean',
       defaultsTo : false
+    },
+    lgaLoaded : {
+      type : 'boolean',
+      defaultsTo : false
     }
   }
 };

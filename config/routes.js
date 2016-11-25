@@ -122,6 +122,12 @@ module.exports.routes = {
     action : 'delete'
   },
 
+  'GET /lga' : {
+   controller : 'UtilController',
+   action : 'lga'
+ }
+
+
 
 
 
