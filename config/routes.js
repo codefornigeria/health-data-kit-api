@@ -125,7 +125,11 @@ module.exports.routes = {
   'GET /lga' : {
    controller : 'UtilController',
    action : 'lga'
- }
+ },
+ 'GET /hospital/lga' : {
+  controller : 'UtilController',
+  action : 'hospitalLga'
+}
 
 
 

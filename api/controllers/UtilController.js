@@ -20,7 +20,7 @@ module.exports = {
 					criteria.name = { startsWith : req.query.name} // change this to starts with  or endswith
 			}
 
-		
+
 			Lga.count (criteria).then (function(count) {
 					var findQuery = Lga.find(criteria)
 							.sort('createdAt DESC')
@@ -47,5 +47,55 @@ module.exports = {
 			}).catch(function(err) {
 					return ValidationService.jsonResolveError(err, res);
 			});
+	},
+	hospitalLga : function(req, res) {
+			var pagination = {
+					page: parseInt(req.query.page) || 1,
+					limit: parseInt(req.query.perPage) || 10
+			};
+			var limit = 50;
+			var criteria = {
+					select: ['uniqueLga','uniqueState'],
+					where: {
+							isDeleted: false
+					}
+			}
+
+			if (req.query.name) {
+					criteria.where.uniqueLga = { startsWith : req.query.name} // change this to starts with  or endswith
+			}
+
+
+			Hospital.count (criteria).then (function(count) {
+					var findQuery = Hospital.find(criteria)
+							.sort('createdAt DESC')
+							.paginate(pagination);
+					return [count, findQuery]
+
+			}).spread(function(count, lgas) {
+
+					if (lgas.length) {
+							var numberOfPages = Math.ceil(count / pagination.limit)
+							var nextPage = parseInt(pagination.page) + 1;
+							var meta = {
+									page: pagination.page,
+									perPage: pagination.limit,
+									previousPage: (pagination.page > 1) ? parseInt(pagination.page) - 1 : false,
+									nextPage: (numberOfPages >= nextPage) ? nextPage : false,
+									pageCount: numberOfPages,
+									total: count
+							}
+							var transformedLgas = UtilService.keyTransform({
+																										uniqueLga:'lga',
+																										uniqueState:'state'
+							} , lgas)
+
+							return ResponseService.json(200, res, " Lgas retrieved successfully", transformedLgas, meta);
+					} else {
+							return ResponseService.json(200, res,"Lgas not found", [])
+					}
+			}).catch(function(err) {
+					return ValidationService.jsonResolveError(err, res);
+			});
 	}
-};
+}
