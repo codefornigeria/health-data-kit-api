@@ -302,21 +302,25 @@ module.exports = {
                 isDeleted: false
             };
 
-            if (data.address) {
-                criteria.address ={
-                    'contains': data.address.toLowerCase()
-                }; // change this to starts with  or endswith
-            }
+            // if (data.address) {
+            //     criteria.address ={
+            //         'contains': data.address.toLowerCase()
+            //     }; // change this to starts with  or endswith
+            // }
 
 
 
                     Pharmacy.native(function(err, collection) {
                         if (err) {
+                            console.log('first error')
                             return ResponseService.json(200, res, "Pharmacy not found", [])
                         }
 
-                        collection.geoNear({ type: "Point", coordinates: [parseFloat(data.longitude), parseFloat(data.latitude)] },
+
+
+                        collection.geoNear(
                      {
+                            near: { type: "Point", coordinates: [parseFloat(data.longitude), parseFloat(data.latitude)]},
                             limit: 30,
                             maxDistance: 10000, // in meters
                             query: criteria, // allows filtering

@@ -2,13 +2,11 @@ var mandrill = require('mandrill-api/mandrill'),
     ejs = require('ejs'),
     fs = require('fs'),
     SparkPost = require('sparkpost'),
-    spClient = new SparkPost(sails.config.settings.sparkPostKey);
-emailClient = sails.config.settings.emailClient;
+    spClient = new SparkPost(sails.config.settings.sparkPostKey),
+    emailClient = sails.config.settings.emailClient;
 
 module.exports = {
-    mandrillClient: mandrill_client = new mandrill.Mandrill(sails.config.settings.mandrillKey),
-    sparkPostClient: mandrill_client = new mandrill.Mandrill(sails.config.settings.mandrillKey),
-
+    mandrillClient : new mandrill.Mandrill(sails.config.settings.mandrillKey),
     /**
      * Send email
      */
