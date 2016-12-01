@@ -89,8 +89,11 @@ module.exports = {
 																										uniqueLga:'lga',
 																										uniqueState:'state'
 							} , lgas)
-
-							return ResponseService.json(200, res, " Lgas retrieved successfully", transformedLgas, meta);
+							var uniqLgas = _.uniq(transformedLgas , function(lga){
+									return lga.lga+lga.state
+							})
+							console.log(uniqLgas)
+							return ResponseService.json(200, res, " Lgas retrieved successfully", uniqLgas, meta);
 					} else {
 							return ResponseService.json(200, res,"Lgas not found", [])
 					}
