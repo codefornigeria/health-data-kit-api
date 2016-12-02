@@ -302,11 +302,11 @@ module.exports = {
                 isDeleted: false
             };
 
-            if (data.address) {
-                criteria.address ={
-                    'contains': data.address.toLowerCase()
-                }; // change this to starts with  or endswith
-            }
+            // if (data.address) {
+            //     criteria.address ={
+            //         '': data.address.toLowerCase()
+            //     }; // change this to starts with  or endswith
+            // }
 
 
 
