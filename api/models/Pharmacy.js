@@ -26,7 +26,6 @@ module.exports = {
         location : {
           type: 'json'
         },
-
         active : {
           type : 'boolean',
           defaultsTo : true
