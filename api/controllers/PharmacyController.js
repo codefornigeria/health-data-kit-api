@@ -302,57 +302,56 @@ module.exports = {
                 isDeleted: false
             };
 
-            // if (data.address) {
-            //     criteria.address ={
-            //         'contains': data.address.toLowerCase()
-            //     }; // change this to starts with  or endswith
-            // }
+            if (data.address) {
+                criteria.address ={
+                    'contains': data.address.toLowerCase()
+                }; // change this to starts with  or endswith
+            }
 
 
 
-                    Pharmacy.native(function(err, collection) {
-                        if (err) {
-                            console.log('first error')
-                            return ResponseService.json(200, res, "Pharmacy not found", [])
-                        }
 
+                Pharmacy.native(function(err, collection) {
+                  if (err) {
+                    return ResponseService.json(200, res, "Pharmacy not found", [])
+                  }
 
+                  collection.geoNear({
+                    type: "Point",
+                    coordinates: [parseFloat(data.longitude), parseFloat(data.latitude)]
+                  }, {
+                    limit: 30,
+                    maxDistance: 10000, // in meters
+                    query: criteria, // allows filtering
+                    distanceMultiplier: 0.1, // 3959, // converts radians to miles (use 6371 for km)
+                    spherical: true
+                  }, function(err, pharmacys) {
 
-                        collection.geoNear(
-                     {
-                            near: { type: "Point", coordinates: [parseFloat(data.longitude), parseFloat(data.latitude)]},
-                            limit: 30,
-                            maxDistance: 10000, // in meters
-                            query: criteria, // allows filtering
-                            distanceMultiplier: 0.1,// 3959, // converts radians to miles (use 6371 for km)
-                            spherical: true
-                        }, function(err, pharmacs) {
+                    if (err) {
+                      console.log(err)
+                      return ResponseService.json(200, res, "Pharmacy not found", [])
 
-                            if (err) {
-                                console.log(err)
-                                return ResponseService.json(200, res, "Pharmacy not found", [])
+                    }
+                    if (pharmacys.results.length) {
+                      var count = pharmacys.results.length;
+                      var numberOfPages = Math.ceil(count / pagination.limit)
+                      var nextPage = parseInt(pagination.page) + 1;
+                      var meta = {
+                        page: pagination.page,
+                        perPage: pagination.limit,
+                        previousPage: (pagination.page > 1) ? parseInt(pagination.page) - 1 : false,
+                        nextPage: (numberOfPages >= nextPage) ? nextPage : false,
+                        pageCount: numberOfPages,
+                        total: count
+                      }
+                      return ResponseService.json(200, res, " Pharmacies retrieved successfully", pharmacys.results, meta);
+                    } else {
+                      return ResponseService.json(200, res, "Pharmacies not found", [])
+                    }
 
-                            }
-                            if (pharmacs.results.length) {
-                                var count = pharmacs.results.length;
-                                var numberOfPages = Math.ceil(count / pagination.limit)
-                                var nextPage = parseInt(pagination.page) + 1;
-                                var meta = {
-                                    page: pagination.page,
-                                    perPage: pagination.limit,
-                                    previousPage: (pagination.page > 1) ? parseInt(pagination.page) - 1 : false,
-                                    nextPage: (numberOfPages >= nextPage) ? nextPage : false,
-                                    pageCount: numberOfPages,
-                                    total: count
-                                }
-                                return ResponseService.json(200, res, " Pharmacy retrieved successfully", pharmacs.results, meta);
-                            } else {
-                                return ResponseService.json(200, res, "Pharmacy not found", []);
-                            }
+                  })
 
-                        })
-
-                    })
+                })
          },
 
 
