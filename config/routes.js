@@ -129,7 +129,32 @@ module.exports.routes = {
  'GET /hospital/lga' : {
   controller : 'UtilController',
   action : 'hospitalLga'
-}
+},
+
+'POST /tracker' : {
+  controller : 'TrackerController',
+  action : 'create'
+},
+'GET /tracker' : {
+  controller : 'TrackerController',
+  action : 'list'
+},
+
+ 'GET /tracker/:id' : {
+  controller : 'TrackerController',
+  action : 'view'
+},
+
+ 'PUT /tracker/:id' : {
+  controller : 'TrackerController',
+  action : 'update'
+},
+
+ 'DELETE /tracker/:id' : {
+  controller : 'TrackerController',
+  action : 'delete'
+},
+
 
 
 
