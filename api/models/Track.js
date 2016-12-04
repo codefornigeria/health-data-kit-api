@@ -45,8 +45,6 @@ module.exports = {
 
     },
       beforeCreate: function(values, cb) {
-        values.name = values.name.toLowerCase();
-
         cb();
     },
 
