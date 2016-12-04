@@ -7,10 +7,19 @@ module.exports= {
     var  data = req.body;
     Track.create(data).then(function(track){
       if(!track){
+        return false
+      } 
+      var poptrack = Track.findOne({
+        id: track.id
+      }).populateAll()
+      return poptrack
+    }).then(function(trackers){
+      if(!trackers){
         return ResponseService.json(400, res, "Error creating tracks")
       }
-      return ResponseService.json(200, res , " tracks created successfully")
+      return ResponseService.json(200, res , " tracks created successfully", trackers)
     }).catch(function(err){
+      console.log(err);
       ValidationService.jsonResolveError(err ,res)
     })
 },
