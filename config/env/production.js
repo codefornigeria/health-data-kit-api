@@ -27,6 +27,7 @@ module.exports = {
         /*
          * JWT settings
          */
+         uploadAdapter: 'disk',
         jwtSecret: 'XSWK$F$GKw39294',
         tokenExpiryInMinutes: 5, // minutes
 
