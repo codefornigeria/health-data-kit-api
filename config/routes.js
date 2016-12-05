@@ -150,11 +150,16 @@ module.exports.routes = {
   action : 'update'
 },
 
+
  'DELETE /tracker/:id' : {
   controller : 'TrackerController',
   action : 'delete'
 },
 
+'POST /upload': {
+  controller: 'UtilController',
+  action: 'upload'
+}
 
 
 
