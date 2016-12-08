@@ -72,7 +72,7 @@ module.exports= {
   viewByHospital: function(req, res) {
       var criteria = {
           isDeleted: false,
-          hospital: req.params.id
+          id: req.params.id
       }
       Hospital.findOne(criteria).then(function(hospital){
         if(!hospital){
