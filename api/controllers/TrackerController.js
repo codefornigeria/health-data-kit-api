@@ -8,7 +8,7 @@ module.exports= {
     Track.create(data).then(function(track){
       if(!track){
         return false
-      } 
+      }
       var poptrack = Track.findOne({
         id: track.id
       }).populateAll()
@@ -67,6 +67,37 @@ module.exports= {
         })
 
   },
+
+
+  viewByHospital: function(req, res) {
+      var criteria = {
+          isDeleted: false,
+          hospital: req.params.id
+      }
+      Hospital.findOne(criteria).then(function(hospital){
+        if(!hospital){
+          return [false ,false]
+        }
+        var tracks = Track.find({
+          hospital: req.param.id,
+          isDeleted: false
+        })
+        return [hospital, tracks]
+      }).spread(function(hospital, tracks){
+        if (!tracks) {
+            return ResponseService.json(400, res, "Tracks not found");
+        }
+        var returned = {
+          hospital: hospital,
+          tracks: tracks
+        }
+        return ResponseService.json(200, res, "Tracks retrieved successfully", returned);
+    })
+    .catch(function(err) {
+        return ValidationService.jsonResolveError(err, res);
+    });
+  },
+
   view: function(req, res) {
       var criteria = {
           isDeleted: false,

@@ -108,20 +108,13 @@ module.exports = {
 				case 'disk':
 				console.log(__dirname)
 				req.file('file').upload({
-          dirname: '../../assets/upload/',
+          dirname: '../../.tmp/upload/',
         },function(err, filesUploaded) {
 						if (err) {
 
 								return ResponseService.json(400, res, "File upload failed")
 						}
-							console.log(filesUploaded[0])
-						// mv(filesUploaded[0].fd , '../../assets/upload' , function(err){
-						// 	if(err){
-						//
-						// 										return ResponseService.json(400, res, "File upload failed")
-						// 	}
-						// })
-						var data = {}
+							var data = {}
             data.fileUrl ="/upload/"+path.basename(filesUploaded[0].fd)
             data.file = filesUploaded[0].fd
             data.fileType = filesUploaded[0].type
@@ -154,7 +147,7 @@ module.exports = {
 						data.fileSize = filesUploaded[0].extra.size
 						return ResponseService.json(200, res, "File uploaded successfully", data)
 				})
-				break
+				break;
 			}
 
 	}
