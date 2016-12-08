@@ -159,6 +159,10 @@ module.exports.routes = {
 'POST /upload': {
   controller: 'UtilController',
   action: 'upload'
+},
+'GET /track-hospitals/:id': {
+  controller: 'TrackerController',
+  action : 'viewByHospital'
 }
 
 
