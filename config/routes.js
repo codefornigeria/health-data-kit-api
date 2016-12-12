@@ -163,6 +163,26 @@ module.exports.routes = {
 'GET /track-hospitals/:id': {
   controller: 'TrackerController',
   action : 'viewByHospital'
+},
+'POST /service': {
+  controller: 'ServiceController',
+  action: 'create'
+},
+'GET /service' : {
+  controller: 'ServiceController',
+  action : 'list'
+},
+"GET /service/:id":{
+  controller: 'ServiceController',
+  action:'view'
+},
+"PUT /service/:id" : {
+  controller: 'ServiceController',
+  action: 'update'
+},
+'DELETE /service/:id' :{
+  controller: 'ServiceController',
+  action : 'delete'
 }
 
 
