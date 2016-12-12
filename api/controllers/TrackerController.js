@@ -46,8 +46,8 @@ module.exports= {
                 .paginate(pagination);
             return [count, findQuery]
 
-        }).spread(function(count, pharmacys) {
-            if (pharmacys.length) {
+        }).spread(function(count, tracks) {
+            if (tracks.length) {
                 var numberOfPages = Math.ceil(count / pagination.limit)
                 var nextPage = parseInt(pagination.page) + 1;
                 var meta = {
@@ -58,7 +58,7 @@ module.exports= {
                     pageCount: numberOfPages,
                     total: count
                 }
-                return ResponseService.json(200, res, " Tracks retrieved successfully", pharmacys, meta);
+                return ResponseService.json(200, res, " Tracks retrieved successfully", tracks, meta);
             } else {
                 return ResponseService.json(200, res, "Track not found", [])
             }
@@ -83,8 +83,8 @@ module.exports= {
           isDeleted: false
         })
         return [hospital, tracks]
-      }).spread(function(hospital, tracks){
-        if (!tracks) {
+      }).spread(function(hospital, trackss){
+        if (!tracks.length ) {
             return ResponseService.json(400, res, "Tracks not found");
         }
         var returned = {

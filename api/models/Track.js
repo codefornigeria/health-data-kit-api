@@ -26,7 +26,7 @@ module.exports = {
            required: true
          },
          service: {
-           type: 'string',
+           model: 'service',
            required: true
          },
         longitude: {
