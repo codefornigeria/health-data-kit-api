@@ -68,35 +68,51 @@ module.exports= {
 
   },
 
+viewByHospital: function(req,res){
+  var criteria = {
+    isDeleted:false,
+    hospital: req.params.id
+  }
+  Track.find(criteria).populate('hospital').then(function(tracks){
+    if(!tracks){
+      return ResponseService.json(400, res, "Tracks not found");
+    }
+    return ResponseService.json(200, res, "Tracks retrieved successfully", tracks);
+})
+.catch(function(err) {
+    return ValidationService.jsonResolveError(err, res);
+});
+},
 
-  viewByHospital: function(req, res) {
-      var criteria = {
-          isDeleted: false,
-          id: req.params.id
-      }
-      Hospital.findOne(criteria).then(function(hospital){
-        if(!hospital){
-          return [false ,false]
-        }
-        var tracks = Track.find({
-          hospital: req.param.id,
-          isDeleted: false
-        })
-        return [hospital, tracks]
-      }).spread(function(hospital, trackss){
-        if (!trackss.length ) {
-            return ResponseService.json(400, res, "Tracks not found");
-        }
-        var returned = {
-          hospital: hospital,
-          tracks: trackss
-        }
-        return ResponseService.json(200, res, "Tracks retrieved successfully", returned);
-    })
-    .catch(function(err) {
-        return ValidationService.jsonResolveError(err, res);
-    });
-  },
+
+  // viewByHospital: function(req, res) {
+  //     var criteria = {
+  //         isDeleted: false,
+  //         id: req.params.id
+  //     }
+  //     Hospital.findOne(criteria).then(function(hospital){
+  //       if(!hospital){
+  //         return [false ,false]
+  //       }
+  //       var tracks = Track.find({
+  //         hospital: req.param.id,
+  //         isDeleted: false
+  //       })
+  //       return [hospital, tracks]
+  //     }).spread(function(hospital, trackss){
+  //       if (!trackss.length ) {
+  //           return ResponseService.json(400, res, "Tracks not found");
+  //       }
+  //       var returned = {
+  //         hospital: hospital,
+  //         tracks: trackss
+  //       }
+  //       return ResponseService.json(200, res, "Tracks retrieved successfully", returned);
+  //   })
+  //   .catch(function(err) {
+  //       return ValidationService.jsonResolveError(err, res);
+  //   });
+  // },
 
   view: function(req, res) {
       var criteria = {
