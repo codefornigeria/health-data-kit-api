@@ -12,9 +12,13 @@
 module.exports = {
     connections: {
         herokuMongoDb: {
-            adapter: 'sails-mongo',
-            url: process.env.MONGODB_URI
-        }
+          adapter: 'sails-mongo',
+          host: 'localhost',
+          port: 27017,
+          user: '',
+          password: '',
+          database: 'phc'
+           }
     },
     models: {
         connection: 'herokuMongoDb',
