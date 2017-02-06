@@ -84,12 +84,12 @@ module.exports= {
         })
         return [hospital, tracks]
       }).spread(function(hospital, trackss){
-        if (!tracks.length ) {
+        if (!trackss.length ) {
             return ResponseService.json(400, res, "Tracks not found");
         }
         var returned = {
           hospital: hospital,
-          tracks: tracks
+          tracks: trackss
         }
         return ResponseService.json(200, res, "Tracks retrieved successfully", returned);
     })
