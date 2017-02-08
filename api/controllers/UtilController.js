@@ -108,7 +108,7 @@ module.exports = {
 				case 'disk':
 				console.log(__dirname)
 				req.file('file').upload({
-          dirname: '../../.tmp/upload/',
+          dirname: '../../.tmp/public/upload/',
         },function(err, filesUploaded) {
 						if (err) {
 
